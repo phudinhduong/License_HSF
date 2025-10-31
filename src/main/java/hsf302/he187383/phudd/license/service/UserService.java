@@ -1,5 +1,6 @@
 package hsf302.he187383.phudd.license.service;
 
+import hsf302.he187383.phudd.license.enums.UserStatus;
 import hsf302.he187383.phudd.license.model.*;
 import hsf302.he187383.phudd.license.repository.*;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
@@ -22,6 +23,7 @@ public class UserService {
     public User create(User u){
         orgRepo.findById(u.getOrganization().getId()).orElseThrow(() -> new ExceptionInInitializerError("Org not found"));
         u.setPasswordHash(encoder.encode(u.getPasswordHash())); // mapper đã map password -> passwordHash tạm
+        u.setStatus(UserStatus.ACTIVE);
         return repo.save(u);
     }
 

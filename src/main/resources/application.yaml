@@ -3,6 +3,7 @@ spring:
     url: jdbc:sqlserver://localhost:1433;databaseName=license;encrypt=true;trustServerCertificate=true
     username: sa
     password: sa
+
   jpa:
     hibernate:
       ddl-auto: create-drop
@@ -15,4 +16,10 @@ server:
 
 logging:
   level:
-    org.springframework.security: DEBUG
+    root: INFO                    # log mặc định
+    org.springframework.security: DEBUG   # chi tiết security
+    org.springframework.web: DEBUG         # log controller và request mapping
+    org.hibernate.SQL: DEBUG               # log SQL
+    org.hibernate.type.descriptor.sql.BasicBinder: TRACE   # log giá trị bind vào query
+    io.jsonwebtoken: DEBUG                 # log parser JWT
+    hsf302.he187383.phudd.license: DEBUG   # toàn bộ package code của em

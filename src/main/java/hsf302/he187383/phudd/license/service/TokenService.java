@@ -53,24 +53,45 @@ public class TokenService {
                 .compact();
     }
 
-    // === Verify ===
+//    // === Verify ===
+//    public Jws<Claims> parseAndValidate(String jwt) {
+//        // Parse token đầy đủ (bao gồm header & payload)
+//        Jws<Claims> jws = Jwts.parserBuilder()
+//                .setAllowedClockSkewSeconds(60)
+//                .build()
+//                .parseClaimsJws(jwt);
+//
+//        String kid = jws.getHeader().getKeyId();
+//
+//        var key = keyRepo.findByKid(kid).orElseGet(() ->
+//                keyRepo.findCurrent(Instant.now()).orElseThrow(() ->
+//                        new IllegalStateException("No active key for verification")));
+//
+//        PublicKey pub = PemUtils.readPublicKeyFromPem(key.getPublicPem());
+//
+//        return Jwts.parserBuilder()
+//                .setSigningKey(pub)
+//                .setAllowedClockSkewSeconds(60)
+//                .build()
+//                .parseClaimsJws(jwt);
+//    }
+
+    // === Verify (dùng SigningKeyResolver) ===
     public Jws<Claims> parseAndValidate(String jwt) {
-        // Parse token đầy đủ (bao gồm header & payload)
-        Jws<Claims> jws = Jwts.parserBuilder()
-                .setAllowedClockSkewSeconds(60)
-                .build()
-                .parseClaimsJws(jwt);
-
-        String kid = jws.getHeader().getKeyId();
-
-        var key = keyRepo.findByKid(kid).orElseGet(() ->
-                keyRepo.findCurrent(Instant.now()).orElseThrow(() ->
-                        new IllegalStateException("No active key for verification")));
-
-        PublicKey pub = PemUtils.readPublicKeyFromPem(key.getPublicPem());
+        SigningKeyResolver resolver = new SigningKeyResolverAdapter() {
+            @Override
+            public Key resolveSigningKey(JwsHeader header, Claims claims) {
+                String kid = header.getKeyId();
+                var key = keyRepo.findByKid(kid).orElseGet(() ->
+                        keyRepo.findCurrent(Instant.now()).orElseThrow(() ->
+                                new IllegalStateException("No active key for verification")));
+                PublicKey pub = PemUtils.readPublicKeyFromPem(key.getPublicPem());
+                return pub;
+            }
+        };
 
         return Jwts.parserBuilder()
-                .setSigningKey(pub)
+                .setSigningKeyResolver(resolver)
                 .setAllowedClockSkewSeconds(60)
                 .build()
                 .parseClaimsJws(jwt);
