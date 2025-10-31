@@ -37,7 +37,7 @@ public class TokenService {
     private String sign(Map<String,Object> baseClaims, String type, long ttlSeconds) {
         var now = Instant.now();
         var kp = keyRepo.findCurrent(now)
-                .orElseThrow(() -> new ExceptionInInitializerError("No active signing key"));
+                    .orElseThrow(() -> new ExceptionInInitializerError("No active signing key"));
         PrivateKey privateKey = PemUtils.readPrivateKeyFromPem(kp.getPrivatePem());
 
         Map<String,Object> claims = new HashMap<>(baseClaims);
@@ -96,7 +96,6 @@ public class TokenService {
                 .build()
                 .parseClaimsJws(jwt);
     }
-
 
     public boolean isAccessToken(Jws<Claims> jws) {
         return "access".equals(jws.getBody().get("typ", String.class));

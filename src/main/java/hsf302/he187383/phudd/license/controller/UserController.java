@@ -14,6 +14,7 @@ public class UserController {
     private final UserService service;
     private final UserMapper mapper;
 
+    //tạo
     @PostMapping
     public UserResponse create(@RequestBody UserCreateRequest req){
         User e = service.create(mapper.toEntity(req));

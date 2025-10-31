@@ -53,7 +53,7 @@ public class DataSeeder implements CommandLineRunner {
 
         User orgAdmin = User.builder()
                 .organization(org)
-                .email("orgadmin@acme.com")
+                .email("orgadmin@gmail.com")
                 .passwordHash(encoder.encode("123456"))
                 .fullName("Org Admin")
                 .role(UserRole.ORG_ADMIN)
