@@ -55,7 +55,8 @@ public class SecurityConfig {
                         ).hasRole("ADMIN")
 
                         .requestMatchers(
-                                HttpMethod.POST, "/api/v1/products"
+                                HttpMethod.POST, "/api/v1/products",
+                                    "/api/v1/plans"
                         ).hasRole("ORG_ADMIN")
 
                         .anyRequest().authenticated()
