@@ -17,6 +17,12 @@ public abstract class BaseEntity {
     @Column(nullable = false)
     protected Instant updatedAt = Instant.now();
 
+    @PrePersist
+    protected void onCreate() {
+        if (createdAt == null) createdAt = Instant.now();
+        if (updatedAt == null) updatedAt = createdAt;
+    }
+
     @PreUpdate
     protected void onUpdate() { this.updatedAt = Instant.now(); }
 

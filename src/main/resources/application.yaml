@@ -16,3 +16,9 @@ server:
 logging:
   level:
     org.springframework.security: DEBUG
+
+app:
+  jwt:
+    secret: "594e1820cffe90742bbd836f0fde19a5c4ac49de2d1816611eb14f06b658a469301d8209"
+    accessTtlSeconds: 3600
+    refreshTtlSeconds: 604800

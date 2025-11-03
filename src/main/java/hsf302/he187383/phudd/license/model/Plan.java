@@ -29,7 +29,7 @@ public class Plan extends BaseEntity {
     @Column(nullable = false)
     private Long priceCredits;
 
-    @Column(nullable = false, length = 8)
+    @Column(length = 8)
     private String currency = "USD";
 
     @Column

@@ -45,6 +45,6 @@ public class WalletTxn extends BaseEntity {
     @Column(name = "idempotency_key", length = 128, nullable = false)
     private String idempotencyKey;
 
-    @Column(nullable = false)
-    private Instant createdAt = Instant.now();
+//    @Column(nullable = false)
+//    private Instant createdAt = Instant.now();
 }
