@@ -1,6 +1,7 @@
 package hsf302.he187383.phudd.license.mapper;
 
 import hsf302.he187383.phudd.license.model.*;
+import org.springframework.context.annotation.Bean;
 
 import java.util.UUID;
 

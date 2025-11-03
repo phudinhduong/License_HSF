@@ -15,19 +15,18 @@ public class PlanUpdateReq {
     @NotNull
     private UUID productId;
 
-    @NotBlank @Size(max = 64)
+    @Size(max = 64)
     private String code;
 
-    @NotBlank @Size(max = 255)
+    @Size(max = 255)
     private String name;
 
-    @NotNull
     private BillingType billingType;
 
-    @NotNull @PositiveOrZero
+    @PositiveOrZero
     private Long priceCredits;
 
-    @NotBlank @Size(max = 8)
+    @Size(max = 8)
     private String currency;
 
     @PositiveOrZero
