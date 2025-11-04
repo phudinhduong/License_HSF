@@ -18,6 +18,8 @@ import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 import org.springframework.web.cors.*;
 
+import org.springframework.boot.autoconfigure.security.servlet.PathRequest;
+
 import java.util.List;
 
 @Configuration
@@ -34,7 +36,9 @@ public class SecurityConfig {
                 .csrf(csrf -> csrf.disable())
                 .sessionManagement(sm -> sm.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
                 .authorizeHttpRequests(auth -> auth
+                        .requestMatchers(PathRequest.toStaticResources().atCommonLocations()).permitAll()
 
+                        .requestMatchers("/", "/index.html", "/login", "/login.html").permitAll()
 
                         // Public endpoints
                         .requestMatchers("/api/auth/**", "/actuator/health"
