@@ -1,0 +1,180 @@
+<!doctype html>
+<html lang="vi">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>Sản phẩm</title>
+
+  <link rel="stylesheet" href="/assets/app.css" />
+  <script src="/assets/app.js" defer></script>
+</head>
+<body>
+  <header class="topbar" data-include="/partials/topbar.html"></header>
+  <aside class="sidebar" data-include="/partials/sidebar.html"></aside>
+
+  <main class="main">
+    <div class="card">
+      <h2>Danh sách sản phẩm</h2>
+
+      <div style="display:flex; gap:8px; flex-wrap:wrap; align-items:center; margin:8px 0 12px;">
+        <input id="q" type="search" placeholder="Tìm theo code hoặc tên…" style="padding:8px 10px; border:1px solid #e5e7eb; border-radius:10px; min-width:260px;">
+        <button id="btnSearch" class="btn">Tìm kiếm</button>
+        <span id="meta" class="muted" style="margin-left:auto;"></span>
+      </div>
+
+      <div style="overflow:auto;">
+        <table id="tbl" style="width:100%; border-collapse:collapse;">
+          <thead>
+          <tr>
+            <th style="text-align:left; padding:10px; border-bottom:1px solid #e5e7eb;">#</th>
+            <th style="text-align:left; padding:10px; border-bottom:1px solid #e5e7eb;">Code</th>
+            <th style="text-align:left; padding:10px; border-bottom:1px solid #e5e7eb;">Tên</th>
+            <th style="text-align:left; padding:10px; border-bottom:1px solid #e5e7eb;">Mô tả</th>
+            <th style="text-align:left; padding:10px; border-bottom:1px solid #e5e7eb;">Tạo lúc</th>
+            <th style="text-align:left; padding:10px; border-bottom:1px solid #e5e7eb;">Hành động</th>
+          </tr>
+          </thead>
+          <tbody id="tbody">
+          <tr><td colspan="6" class="muted" style="padding:12px;">Đang tải…</td></tr>
+          </tbody>
+        </table>
+      </div>
+
+      <div style="display:flex; gap:8px; align-items:center; justify-content:flex-end; margin-top:12px;">
+        <button class="btn" id="btnFirst">« Đầu</button>
+        <button class="btn" id="btnPrev">‹ Trước</button>
+        <span id="pageInfo" class="muted"></span>
+        <button class="btn" id="btnNext">Tiếp ›</button>
+        <button class="btn" id="btnLast">Cuối »</button>
+      </div>
+
+      <div id="debug" class="muted" style="margin-top:8px; font-size:12px;"></div>
+    </div>
+  </main>
+
+  <script>
+    const PAGE_SIZE = 10;
+
+    const qInput   = document.getElementById('q');
+    const btnSearch= document.getElementById('btnSearch');
+    const tbody    = document.getElementById('tbody');
+    const pageInfo = document.getElementById('pageInfo');
+    const meta     = document.getElementById('meta');
+    const debugEl  = document.getElementById('debug');
+
+    const btnFirst = document.getElementById('btnFirst');
+    const btnPrev  = document.getElementById('btnPrev');
+    const btnNext  = document.getElementById('btnNext');
+    const btnLast  = document.getElementById('btnLast');
+
+    const state = { q:"", page:0, size:PAGE_SIZE, totalPages:0, totalElements:0 };
+
+    function escapeHtml(s) {
+      return String(s ?? "")
+        .replaceAll("&","&amp;")
+        .replaceAll("<","&lt;")
+        .replaceAll(">","&gt;")
+        .replaceAll('"',"&quot;")
+        .replaceAll("'","&#039;");
+    }
+    function fmtDate(v) { try { return v ? new Date(v).toLocaleString() : ""; } catch { return String(v||""); } }
+    function pushUrl() {
+      const usp = new URLSearchParams();
+      if (state.q) usp.set('q', state.q);
+      if (state.page) usp.set('page', String(state.page));
+      history.replaceState({}, '', location.pathname + (usp.toString() ? ('?' + usp.toString()) : ''));
+    }
+
+    async function fetchProducts() {
+      const params = new URLSearchParams();
+      if (state.q) params.set("q", state.q);
+      params.set("page", state.page);
+      params.set("size", state.size);
+
+      const base = (typeof API_BASE !== 'undefined' ? API_BASE : '');
+      const url = base + "/api/products?" + params.toString();
+
+      const headers = {};
+      if (typeof getAccess === 'function') { const acc = getAccess(); if (acc) headers["Authorization"] = acc.header; }
+
+      tbody.innerHTML = `<tr><td colspan="6" class="muted" style="padding:12px;">Đang tải…</td></tr>`;
+      try {
+        const resp = await fetch(url, { headers });
+        if (!resp.ok) throw new Error(resp.status + ' ' + resp.statusText);
+        const data = await resp.json();
+        renderTable(data);
+        renderPager(data);
+        renderMeta(data);
+        pushUrl();
+        debugEl.textContent = "";
+      } catch (e) {
+        tbody.innerHTML = `<tr><td colspan="6" style="padding:12px; color:#9b2c2c;">Lỗi tải dữ liệu: ${escapeHtml(e?.message || e)}</td></tr>`;
+      }
+    }
+
+    function renderTable(pageData) {
+      const list = pageData?.content || [];
+      if (!list.length) {
+        tbody.innerHTML = `<tr><td colspan="6" class="muted" style="padding:12px;">Không có dữ liệu.</td></tr>`;
+        return;
+      }
+      tbody.innerHTML = list.map((it, idx) => {
+        const rowNo = state.page * state.size + idx + 1;
+        const id   = it.id ?? it.productId ?? "";
+        const code = it.code ?? "";
+        const name = it.name ?? "";
+        const desc = it.description ?? it.descr ?? "";
+        const created = fmtDate(it.createdAt);
+
+        // truyền productId + tên/code sang trang plans.html
+        const href = `/plans.html?productId=${encodeURIComponent(id)}&productCode=${encodeURIComponent(code)}&productName=${encodeURIComponent(name)}`;
+
+        return `
+          <tr>
+            <td style="padding:10px; border-bottom:1px solid #e5e7eb;">${rowNo}</td>
+            <td style="padding:10px; border-bottom:1px solid #e5e7eb;">${escapeHtml(code)}</td>
+            <td style="padding:10px; border-bottom:1px solid #e5e7eb;">${escapeHtml(name)}</td>
+            <td style="padding:10px; border-bottom:1px solid #e5e7eb;">${escapeHtml(desc)}</td>
+            <td style="padding:10px; border-bottom:1px solid #e5e7eb;">${escapeHtml(created)}</td>
+            <td style="padding:10px; border-bottom:1px solid #e5e7eb;">
+              <a class="btn" href="${href}">Xem chi tiết</a>
+            </td>
+          </tr>
+        `;
+      }).join("");
+    }
+
+    function renderPager(pageData) {
+      const number = Number(pageData?.number ?? 0);
+      const totalPages = Number(pageData?.totalPages ?? 0);
+      const totalElements = Number(pageData?.totalElements ?? 0);
+      state.page = number; state.totalPages = totalPages; state.totalElements = totalElements;
+      pageInfo.textContent = totalPages ? `Trang ${number + 1} / ${totalPages} (Tổng ${totalElements})` : `0 / 0`;
+      btnFirst.disabled = number <= 0; btnPrev.disabled = number <= 0;
+      btnNext.disabled = number >= totalPages - 1; btnLast.disabled = number >= totalPages - 1;
+    }
+
+    function renderMeta(pageData) {
+      const total = Number(pageData?.totalElements ?? 0);
+      const showingFrom = total ? (state.page * state.size + 1) : 0;
+      const showingTo = Math.min((state.page + 1) * state.size, total);
+      meta.textContent = total ? `Đang hiển thị ${showingFrom}–${showingTo} / ${total}` : "";
+    }
+
+    btnSearch.addEventListener('click', () => { state.q = qInput.value.trim(); state.page = 0; fetchProducts(); });
+    qInput.addEventListener('keydown', (e) => { if (e.key === 'Enter') { state.q = qInput.value.trim(); state.page = 0; fetchProducts(); } });
+    btnFirst.addEventListener('click', () => { state.page = 0; fetchProducts(); });
+    btnPrev .addEventListener('click', () => { if (state.page > 0) { state.page--; fetchProducts(); }});
+    btnNext .addEventListener('click', () => { if (state.page < state.totalPages - 1) { state.page++; fetchProducts(); }});
+    btnLast .addEventListener('click', () => { if (state.totalPages > 0) { state.page = state.totalPages - 1; fetchProducts(); }});
+
+    window.partialsReady.then(() => {
+      const usp = new URLSearchParams(location.search);
+      const q = usp.get("q"); if (q) { state.q = q; qInput.value = q; }
+      const p = parseInt(usp.get("page") || "0", 10);
+      if (!Number.isNaN(p) && p >= 0) state.page = p;
+      fetchProducts();
+    });
+  </script>
+</body>
+</html>

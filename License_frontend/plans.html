@@ -1,0 +1,66 @@
+<!doctype html>
+<html lang="vi">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>Plans</title>
+
+  <link rel="stylesheet" href="/assets/app.css" />
+</head>
+<body>
+  <!-- Partials -->
+  <header class="topbar" data-include="/partials/topbar.html"></header>
+  <aside class="sidebar" data-include="/partials/sidebar.html"></aside>
+
+  <main class="main">
+    <div class="card">
+      <div style="display:flex; align-items:center; gap:8px; flex-wrap:wrap; justify-content:space-between;">
+        <div>
+          <h2 style="margin:0;">Danh sách plans</h2>
+          <div id="subTitle" class="muted" style="font-size:13px; margin-top:4px;"></div>
+        </div>
+        <a class="btn" href="/products.html">← Quay lại sản phẩm</a>
+      </div>
+
+      <!-- Table -->
+      <div style="overflow:auto; margin-top:12px;">
+        <table id="tbl" style="width:100%; border-collapse:collapse;">
+          <thead>
+          <tr>
+            <th style="text-align:left; padding:10px; border-bottom:1px solid #e5e7eb;">#</th>
+            <th style="text-align:left; padding:10px; border-bottom:1px solid #e5e7eb;">Code</th>
+            <th style="text-align:left; padding:10px; border-bottom:1px solid #e5e7eb;">Tên</th>
+            <th style="text-align:left; padding:10px; border-bottom:1px solid #e5e7eb;">Billing</th>
+            <th style="text-align:left; padding:10px; border-bottom:1px solid #e5e7eb;">Giá (credits)</th>
+            <th style="text-align:left; padding:10px; border-bottom:1px solid #e5e7eb;">Tiền tệ</th>
+            <th style="text-align:left; padding:10px; border-bottom:1px solid #e5e7eb;">Thời hạn</th>
+            <th style="text-align:left; padding:10px; border-bottom:1px solid #e5e7eb;">Seats</th>
+            <th style="text-align:left; padding:10px; border-bottom:1px solid #e5e7eb;">Concurrent</th>
+            <th style="text-align:left; padding:10px; border-bottom:1px solid #e5e7eb;">Device</th>
+            <th style="text-align:left; padding:10px; border-bottom:1px solid #e5e7eb;">Tạo lúc</th>
+          </tr>
+          </thead>
+          <tbody id="tbody">
+          <tr><td colspan="11" class="muted" style="padding:12px;">Đang tải…</td></tr>
+          </tbody>
+        </table>
+      </div>
+
+      <!-- Pagination -->
+      <div style="display:flex; gap:8px; align-items:center; justify-content:flex-end; margin-top:12px;">
+        <button class="btn" id="btnFirst">« Đầu</button>
+        <button class="btn" id="btnPrev">‹ Trước</button>
+        <span id="pageInfo" class="muted"></span>
+        <button class="btn" id="btnNext">Tiếp ›</button>
+        <button class="btn" id="btnLast">Cuối »</button>
+      </div>
+
+      <div id="debug" class="muted" style="margin-top:8px; font-size:12px;"></div>
+    </div>
+  </main>
+
+  <!-- Thứ tự: app.js trước, rồi plans.js -->
+  <script src="/assets/app.js" defer></script>
+  <script src="/assets/plans.js" defer></script>
+</body>
+</html>

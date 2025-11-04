@@ -30,6 +30,15 @@ public class SeedingData {
             // tránh seed trùng
             if (productRepo.count() > 0 || userRepo.count() > 0) return;
 
+            for(int i = 0; i < 15; i++)
+            {
+                Product prod = productRepo.save(Product.builder()
+                        .code("demo"+i)
+                        .name("demo" +i)
+                        .description("Seeded product "+"demo "+i)
+                        .build());
+            }
+
             // 1) Product
             Product prod = productRepo.save(Product.builder()
                     .code("DEMO")

@@ -23,4 +23,6 @@ public interface PlanRepository extends JpaRepository<Plan, UUID> {
     Page<Plan> search(@Param("productId") UUID productId,
                       @Param("q") String q,
                       Pageable pageable);
+
+
 }

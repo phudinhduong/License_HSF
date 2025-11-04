@@ -50,7 +50,7 @@ public class PlanController {
     //tested api
     @GetMapping
     public Page<PlanResp> list(
-            @RequestParam(value = "productId", required = false) UUID productId,
+            @RequestParam(value = "productId", required = true) UUID productId,
             @RequestParam(value = "q", required = false) String q,
             @PageableDefault(sort = "createdAt", direction = Sort.Direction.DESC) Pageable pageable) {
         return service.list(productId, q, pageable);

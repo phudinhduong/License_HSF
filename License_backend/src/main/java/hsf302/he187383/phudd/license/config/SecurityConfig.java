@@ -38,7 +38,7 @@ public class SecurityConfig {
                 .authorizeHttpRequests(auth -> auth
                         .requestMatchers(PathRequest.toStaticResources().atCommonLocations()).permitAll()
 
-                        .requestMatchers("/", "/index.html", "/login", "/login.html").permitAll()
+                        .requestMatchers("/", "/index.html", "/login", "/login.html","app.css").permitAll()
 
                         // Public endpoints
                         .requestMatchers("/api/auth/**", "/actuator/health"
