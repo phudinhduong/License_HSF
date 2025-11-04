@@ -13,7 +13,7 @@ spring:
     log-request-details: true   # log thêm method, headers cơ bản
 
 server:
-  port: 8081
+  port: 8080
 
 logging:
   level:
