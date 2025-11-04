@@ -45,7 +45,7 @@ public class SeedingData {
                     .billingType(BillingType.PERPETUAL) // hoặc BillingType.PERPETUAL tùy enum của bạn (PERPETUAL)
                     .priceCredits(1L)
                     .durationDays(0)           // perpetual
-                    .seats(5)                  // ví dụ
+                    .seats(2)                  // ví dụ
                     .concurrentLimitPerAccount(2)
                     .deviceLimitPerAccount(3)
                     .build());
@@ -71,9 +71,10 @@ public class SeedingData {
                     .status(WalletStatus.ACTIVE)
                     .build());
 
+//            //thanh toán thành công
 //            Optional wallet1 = walletRepo.findByUserId(user.getId());
 //            Wallet wallet = (Wallet) wallet1.get();
-
+//
 //            Order order = Order.builder()
 //                    .user(user)
 //                    .plan(plan)

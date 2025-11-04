@@ -37,7 +37,7 @@ public class SecurityConfig {
 
 
                         // Public endpoints
-                        .requestMatchers("/api/auth/**", "/actuator/health","/api/orders/credits"
+                        .requestMatchers("/api/auth/**", "/actuator/health"
                         ).permitAll()
 
                         .requestMatchers(HttpMethod.GET, "/api/products/**", "/api/plans/**"
@@ -45,17 +45,17 @@ public class SecurityConfig {
 
                         // Admin-only for write operations
                         .requestMatchers(HttpMethod.POST,   "/api/products/**", "/api/plans/**"
-                        ).hasRole("ADMIN")
+                        ).hasAuthority("ADMIN")
 
                         .requestMatchers(HttpMethod.PUT,    "/api/products/**", "/api/plans/**"
-                        ).hasRole("ADMIN")
+                        ).hasAuthority("ADMIN")
 
                         .requestMatchers(HttpMethod.DELETE, "/api/products/**", "/api/plans/**"
-                        ).hasRole("ADMIN")
+                        ).hasAuthority("ADMIN")
 
                         // User-only for read operations
                         .requestMatchers(HttpMethod.POST,   "/api/orders/credits"
-                        ).hasRole("USER")
+                        ).hasAuthority("USER")
 
 
 

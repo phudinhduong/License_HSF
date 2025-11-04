@@ -9,13 +9,42 @@ spring:
     properties:
       hibernate.dialect: org.hibernate.dialect.SQLServerDialect
       hibernate.jdbc.time_zone: UTC
+  mvc:
+    log-request-details: true   # log thêm method, headers cơ bản
 
 server:
-  port: 8080
+  port: 8081
 
 logging:
   level:
+    # ===== Spring Security =====
     org.springframework.security: DEBUG
+    org.springframework.security.web.FilterChainProxy: DEBUG   # thấy filter nào chạy
+    org.springframework.security.web.access: DEBUG             # quyết định cho/không cho
+    org.springframework.security.web.csrf: DEBUG               # lỗi CSRF (nếu có)
+    org.springframework.security.oauth2: DEBUG
+    org.springframework.security.oauth2.server.resource: DEBUG # resource server JWT
+
+    # ===== Web MVC =====
+    org.springframework.web: DEBUG
+    org.springframework.web.servlet.DispatcherServlet: DEBUG    # mapping -> handler
+    org.springframework.web.servlet.handler: TRACE              # chọn handler nào
+    org.springframework.web.filter.CommonsRequestLoggingFilter: DEBUG
+
+    # ===== JPA / Hibernate (Boot 3 / Hibernate 6) =====
+    org.hibernate.SQL: DEBUG                 # câu SQL
+    org.hibernate.orm.jdbc.bind: TRACE       # giá trị bind ?1, ?2
+    # (Nếu dùng Hibernate 5, thêm cái dưới cho chắc)
+    org.hibernate.type.descriptor.sql.BasicBinder: TRACE
+
+    # ===== Transaction / JDBC =====
+    org.springframework.orm.jpa: DEBUG
+    org.springframework.transaction.interceptor: TRACE
+    org.springframework.jdbc.core: DEBUG
+    com.zaxxer.hikari: DEBUG                 # connection pool
+
+
+    hsf302.he187383.phudd.license: DEBUG
 
 app:
   jwt:
