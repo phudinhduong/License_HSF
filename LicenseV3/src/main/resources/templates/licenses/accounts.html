@@ -42,7 +42,7 @@
             <tr th:each="a : ${accounts}">
                 <td th:text="${a.username}">user_child</td>
                 <!-- Không hiển thị password thật vì bảo mật -->
-                <td>••••••</td>
+                <td th:text="${a.passwordHash}">password</td>
                 <td th:text="${a.status}">ACTIVE</td>
                 <td th:text="${a.createdAt}">...</td>
                 <td th:text="${a.updatedAt}">...</td>

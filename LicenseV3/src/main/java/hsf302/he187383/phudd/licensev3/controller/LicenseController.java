@@ -79,8 +79,8 @@ public class LicenseController {
         }
 
         try {
-            var hash = passwordEncoder.encode(password);
-            accountService.create(licenseId, username, hash);
+            //var hash = passwordEncoder.encode(password);
+            accountService.create(licenseId, username, password);
             license.setSeatsUsed(used + 1);
             licenseRepo.save(license);
             ra.addFlashAttribute("success", "Tạo tài khoản thành công.");
@@ -116,9 +116,12 @@ public class LicenseController {
     @PostMapping("/{licenseId}/accounts/{accountId}/edit")
     public String updateAccountPassword(@PathVariable UUID licenseId,
                                         @PathVariable UUID accountId,
-                                        @RequestParam String password,
+                                        @RequestParam String oldPassword,
+                                        @RequestParam String newPassword,
+                                        @RequestParam String confirmPassword,
                                         Authentication auth,
                                         RedirectAttributes ra) {
+
         var user = requireUser(auth);
         var license = licenseRepo.findByIdAndUserId(licenseId, user.getId())
                 .orElseThrow(() -> new IllegalArgumentException("License not found"));
@@ -129,9 +132,39 @@ public class LicenseController {
             throw new IllegalArgumentException("Account not under this license");
         }
 
-        var hash = passwordEncoder.encode(password);
+        // 1) Kiểm tra mật khẩu cũ
+        if (!passwordEncoder.matches(oldPassword, account.getPasswordHash())) {
+            ra.addFlashAttribute("error", "Mật khẩu cũ không đúng.");
+            return "redirect:/licenses/" + licenseId + "/accounts/" + accountId + "/edit";
+        }
+
+        // 2) Kiểm tra xác nhận trùng khớp
+        if (!newPassword.equals(confirmPassword)) {
+            ra.addFlashAttribute("error", "Xác nhận mật khẩu mới không khớp.");
+            return "redirect:/licenses/" + licenseId + "/accounts/" + accountId + "/edit";
+        }
+
+        // 3) Ràng buộc tối thiểu (tuỳ chỉnh thêm nếu muốn)
+        var np = newPassword.trim();
+        if (np.length() < 6) {
+            ra.addFlashAttribute("error", "Mật khẩu mới phải có ít nhất 6 ký tự.");
+            return "redirect:/licenses/" + licenseId + "/accounts/" + accountId + "/edit";
+        }
+        if (passwordEncoder.matches(np, account.getPasswordHash())) {
+            ra.addFlashAttribute("error", "Mật khẩu mới không được trùng với mật khẩu cũ.");
+            return "redirect:/licenses/" + licenseId + "/accounts/" + accountId + "/edit";
+        }
+
+        // 4) Cập nhật
+        var hash = passwordEncoder.encode(np);
         accountService.updatePassword(accountId, hash);
+
+        // (Nếu bé đang lưu thêm initialPasswordEnc để hiển thị, nhớ cập nhật luôn)
+        // account.setInitialPasswordEnc(crypto.encrypt(np));
+        // accountRepo.save(account);
+
         ra.addFlashAttribute("success", "Đổi mật khẩu thành công.");
         return "redirect:/licenses/" + licenseId + "/accounts";
     }
+
 }

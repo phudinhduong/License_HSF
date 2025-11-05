@@ -19,20 +19,51 @@
 
         <form th:action="@{|/licenses/${license.id}/accounts|}" method="post" class="form">
             <input type="hidden" th:name="${_csrf.parameterName}" th:value="${_csrf.token}">
+
             <div class="row">
                 <label>Username</label>
                 <input name="username" required placeholder="ví dụ: child_01">
             </div>
-            <div class="row">
+
+            <div class="row" style="position: relative;">
                 <label>Mật khẩu</label>
-                <input name="password" type="password" required>
+                <input id="passwordInput" name="password" type="password" required style="padding-right: 36px;">
+                <button type="button" id="togglePassword"
+                        style="
+                    position: absolute;
+                    right: 8px;
+                    top: 34px;
+                    background: none;
+                    border: none;
+                    cursor: pointer;
+                    font-size: 14px;
+                    color: #6b7280;
+                "
+                        title="Hiện / Ẩn mật khẩu">👁</button>
             </div>
+
             <div class="row">
                 <button type="submit" class="btn primary">Tạo</button>
                 <a class="btn" th:href="@{|/licenses/${license.id}/accounts|}">Huỷ</a>
             </div>
         </form>
+
+
+
     </div>
 </main>
+
+
+<script>
+    const toggleBtn = document.getElementById('togglePassword');
+    const passwordInput = document.getElementById('passwordInput');
+
+    toggleBtn.addEventListener('click', () => {
+        const isHidden = passwordInput.type === 'password';
+        passwordInput.type = isHidden ? 'text' : 'password';
+        toggleBtn.textContent = isHidden ? '🙈' : '👁'; // đổi icon
+    });
+</script>
+
 </body>
 </html>
