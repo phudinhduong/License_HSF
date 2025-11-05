@@ -1,0 +1,37 @@
+<!doctype html>
+<html lang="vi" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Chi tiết License</title>
+    <link rel="stylesheet" th:href="@{/app.css}">
+</head>
+<body>
+<header th:replace="~{fragments/layout :: topbar}"></header>
+<aside th:replace="~{fragments/layout :: sidebar}"></aside>
+
+<main class="main">
+    <div class="card">
+        <div class="breadcrumb">
+            <a th:href="@{/templates/dashboard}">&larr; Về Dashboard</a>
+        </div>
+
+        <h2>Chi tiết License</h2>
+        <p>
+            <b>Sản phẩm:</b> <span th:text="${license.plan.product.name}">Product</span><br/>
+            <b>Plan:</b> <span th:text="${license.plan.name}">Plan</span>
+            (<span th:text="${license.plan.code}">CODE</span>)<br/>
+            <b>Billing:</b> <span th:text="${license.plan.billingType}">SUBSCRIPTION</span><br/>
+            <b>License Key:</b> <span th:text="${license.licenseKey}">KEY</span><br/>
+            <b>Trạng thái:</b> <span th:text="${license.status}">ACTIVE</span><br/>
+            <b>Seats:</b> <span th:text="${license.seatsUsed} ?: 0">0</span>/<span th:text="${license.seatsTotal} ?: '-'">-</span><br/>
+            <b>Issued:</b> <span th:text="${license.issuedAt}">…</span><br/>
+            <b>Expires:</b> <span th:text="${license.expiresAt != null ? license.expiresAt : '—'}">—</span>
+        </p>
+
+        <div style="margin-top:12px;">
+            <a class="btn" th:href="@{|/licenses/${license.id}/accounts|}">Quản lý tài khoản con</a>
+        </div>
+    </div>
+</main>
+</body>
+</html>

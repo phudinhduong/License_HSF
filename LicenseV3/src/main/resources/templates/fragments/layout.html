@@ -1,0 +1,96 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" lang="vi">
+<body>
+
+<!-- ==================== TOPBAR (no JS, no dropdown) ==================== -->
+<header th:fragment="topbar" class="topbar">
+    <div class="brand" id="pageTitle">License</div>
+
+    <nav class="right simple-auth">
+        <!-- Chưa đăng nhập -->
+        <a class="btn primary"
+           th:if="${currentUser == null}"
+           th:href="@{/login}">
+            Đăng nhập
+        </a>
+
+        <!-- Đã đăng nhập: hiện thẳng các link -->
+        <div class="auth-inline" th:if="${currentUser != null}">
+            <span class="avatar" aria-hidden="true"></span>
+            <span class="user-label" th:text="${currentUser.displayName}">Tài khoản</span>
+            <span class="sep">•</span>
+            <a th:href="@{/profile}">Thông tin người dùng</a>
+            <span class="sep">•</span>
+            <form th:action="@{/logout}" method="post" style="display:inline">
+                <input type="hidden" th:name="${_csrf.parameterName}" th:value="${_csrf.token}" />
+                <button type="submit" class="linklike">Đăng xuất</button>
+            </form>
+        </div>
+    </nav>
+</header>
+
+
+<!-- ==================== SIDEBAR (no JS; mở theo trang hiện tại) ==================== -->
+<!-- templates/fragments/layout.html -->
+<aside th:fragment="sidebar" class="sidebar"
+       th:with="uri=${#httpServletRequest != null ? #httpServletRequest.requestURI : ''}">
+
+    <div class="nav-title">Điều hướng</div>
+
+    <nav aria-label="Điều hướng">
+        <ul class="menu">
+            <li class="single">
+                <a th:href="@{/dashboard}"
+                   th:classappend="${uri == '/dashboard' or uri == '/'} ? ' active' : ''">
+                    Trang chủ
+                </a>
+            </li>
+
+            <li class="single">
+                <a th:href="@{/products}"
+                   th:classappend="${uri.startsWith('/products')} ? ' active' : ''">
+                    Sản phẩm
+                </a>
+            </li>
+
+            <li class="single">
+                <a th:href="@{/plans}"
+                   th:classappend="${uri.startsWith('/plans')} ? ' active' : ''">
+                    Gói / Plans
+                </a>
+            </li>
+
+            <li class="single">
+                <a th:href="@{/orders}"
+                   th:classappend="${uri.startsWith('/orders')} ? ' active' : ''">
+                    Đơn hàng
+                </a>
+            </li>
+
+            <li class="single">
+                <a th:href="@{/templates/licenses}"
+                   th:classappend="${uri.startsWith('/licenses')} ? ' active' : ''">
+                    License
+                </a>
+            </li>
+
+            <li class="single">
+                <a th:href="@{/profile}"
+                   th:classappend="${uri.startsWith('/profile')} ? ' active' : ''">
+                    Hồ sơ
+                </a>
+            </li>
+
+            <li class="single">
+                <a th:href="@{/docs}"
+                   th:classappend="${uri.startsWith('/docs')} ? ' active' : ''">
+                    Tài liệu
+                </a>
+            </li>
+        </ul>
+    </nav>
+</aside>
+
+
+</body>
+</html>

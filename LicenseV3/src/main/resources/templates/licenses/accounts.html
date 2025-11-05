@@ -1,0 +1,58 @@
+<!doctype html>
+<html lang="vi" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Tài khoản con</title>
+    <link rel="stylesheet" th:href="@{/app.css}">
+</head>
+<body>
+<header th:replace="~{fragments/layout :: topbar}"></header>
+<aside th:replace="~{fragments/layout :: sidebar}"></aside>
+
+<main class="main">
+    <div class="card">
+        <div class="breadcrumb">
+            <a th:href="@{/dashboard}">&larr; Dashboard</a> /
+            <a th:href="@{|/licenses/${license.id}|}">Chi tiết License</a>
+        </div>
+
+        <div class="row-between">
+            <h2>Tài khoản con cho: <span th:text="${license.plan.product.name}">Product</span> – <span th:text="${license.plan.name}">Plan</span></h2>
+            <a class="btn primary" th:href="@{|/licenses/${license.id}/accounts/new|}">Thêm mới</a>
+        </div>
+
+        <div class="alert success" th:if="${success}" th:text="${success}"></div>
+        <div class="alert error" th:if="${error}" th:text="${error}"></div>
+
+        <table class="table">
+            <thead>
+            <tr>
+                <th>Username</th>
+                <th>Mật khẩu</th>
+                <th>Trạng thái</th>
+                <th>Tạo lúc</th>
+                <th>Cập nhật lúc</th>
+                <th style="width:120px">Hành động</th>
+            </tr>
+            </thead>
+            <tbody>
+            <tr th:if="${#lists.isEmpty(accounts)}">
+                <td colspan="6" class="muted">Chưa có tài khoản nào.</td>
+            </tr>
+            <tr th:each="a : ${accounts}">
+                <td th:text="${a.username}">user_child</td>
+                <!-- Không hiển thị password thật vì bảo mật -->
+                <td>••••••</td>
+                <td th:text="${a.status}">ACTIVE</td>
+                <td th:text="${a.createdAt}">...</td>
+                <td th:text="${a.updatedAt}">...</td>
+                <td>
+                    <a class="btn" th:href="@{|/licenses/${license.id}/accounts/${a.id}/edit|}">Sửa</a>
+                </td>
+            </tr>
+            </tbody>
+        </table>
+    </div>
+</main>
+</body>
+</html>

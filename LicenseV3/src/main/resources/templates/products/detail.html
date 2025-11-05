@@ -1,0 +1,81 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <title th:text="'Sản phẩm: ' + ${product.name}">Sản phẩm</title>
+    <link rel="stylesheet" th:href="@{/app.css}">
+</head>
+<body>
+
+<header th:replace="~{fragments/layout :: topbar}"></header>
+<aside th:replace="~{fragments/layout :: sidebar}"></aside>
+
+<main class="main">
+    <div class="card">
+        <div class="breadcrumb">
+            <a th:href="@{/products}">&larr; Quay lại danh sách sản phẩm</a>
+        </div>
+
+        <h2 th:text="${product.name}">Tên sản phẩm</h2>
+        <p class="muted">
+            <strong>Mã:</strong> <span th:text="${product.code}">PRD001</span>
+            <br/>
+            <strong>Mô tả:</strong> <span th:text="${product.description}">Mô tả…</span>
+            <br/>
+            <strong>Tạo lúc:</strong> <span th:text="${product.createdAt}">2025-11-05T00:00:00Z</span>
+        </p>
+    </div>
+
+    <div class="card" style="margin-top:12px;">
+        <h3>Gói (Plans) của sản phẩm</h3>
+
+        <!-- flash messages -->
+        <div class="alert success" th:if="${success}" th:text="${success}"></div>
+        <div class="alert error" th:if="${error}" th:text="${error}"></div>
+
+        <table class="table">
+            <thead>
+            <tr>
+                <th style="width:120px">Mã</th>
+                <th style="width:220px">Tên</th>
+                <th style="width:120px">Billing</th>
+                <th style="width:140px">Giá (credits)</th>
+<!--                <th style="width:90px">Tiền tệ</th>-->
+                <th style="width:140px">Thời hạn</th>
+                <th style="width:90px">Seats</th>
+                <th style="width:120px">Concurrent</th>
+                <th style="width:100px">Device</th>
+                <th style="width:120px">Mua</th>
+            </tr>
+            </thead>
+            <tbody>
+            <tr th:if="${#lists.isEmpty(plans)}">
+                <td colspan="10" class="muted">Sản phẩm này chưa có gói nào.</td>
+            </tr>
+
+            <tr th:each="pl : ${plans}">
+                <td th:text="${pl.code}">BASIC</td>
+                <td th:text="${pl.name}">Basic Plan</td>
+                <td th:text="${pl.billingType}">PERPETUAL</td>
+                <td th:text="${#numbers.formatDecimal(pl.priceCredits, 1, 0)}">10000</td>
+<!--                <td th:text="${pl.currency}">USD</td>-->
+                <td th:text="${pl.durationDays != null and pl.durationDays > 0 ? pl.durationDays + ' ngày' : 'Perpetual'}">Perpetual</td>
+                <td th:text="${pl.seats} ?: '-'">-</td>
+                <td th:text="${pl.concurrentLimitPerAccount} ?: '-'">-</td>
+                <td th:text="${pl.deviceLimitPerAccount} ?: '-'">-</td>
+                <td>
+                    <form th:action="@{/orders/buy}" method="post">
+                        <input type="hidden" name="planId" th:value="${pl.id}">
+                        <input type="hidden" name="productId" th:value="${product.id}">
+                        <input type="hidden" th:name="${_csrf.parameterName}" th:value="${_csrf.token}">
+                        <button type="submit" class="btn primary">Mua</button>
+                    </form>
+                </td>
+            </tr>
+            </tbody>
+        </table>
+    </div>
+</main>
+
+</body>
+</html>

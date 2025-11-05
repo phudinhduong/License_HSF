@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <title>Sản phẩm</title>
+    <link rel="stylesheet" th:href="@{/app.css}">
+</head>
+<body>
+
+<header th:replace="~{fragments/layout :: topbar}"></header>
+<aside th:replace="~{fragments/layout :: sidebar}"></aside>
+
+<main class="main">
+    <div class="card">
+        <h2>Danh sách sản phẩm</h2>
+
+        <table class="table">
+            <thead>
+            <tr>
+                <th style="width:180px">Mã</th>
+                <th style="width:280px">Tên</th>
+                <th>Mô tả</th>
+                <th style="width:200px">Ngày tạo</th>
+                <th style="width:120px">Hành động</th>
+            </tr>
+            </thead>
+            <tbody>
+            <tr th:if="${#lists.isEmpty(products)}">
+                <td colspan="5" class="muted">Chưa có sản phẩm nào.</td>
+            </tr>
+            <tr th:each="p : ${products}">
+                <td th:text="${p.code}">PRD001</td>
+                <td th:text="${p.name}">Tên sản phẩm</td>
+                <td th:text="${p.description}">Mô tả…</td>
+                <td th:text="${p.createdAt}">2025-11-05T00:00:00Z</td>
+                <td><a th:href="@{|/products/${p.id}|}">Xem</a></td>
+            </tr>
+            </tbody>
+        </table>
+    </div>
+</main>
+
+</body>
+</html>

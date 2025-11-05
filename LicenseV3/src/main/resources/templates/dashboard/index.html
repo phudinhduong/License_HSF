@@ -1,0 +1,63 @@
+<!doctype html>
+<html lang="vi" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="utf-8"/>
+    <meta name="viewport" content="width=device-width,initial-scale=1"/>
+    <title>License</title>
+
+    <!-- dùng @{...} để Thymeleaf tự resolve context-path -->
+    <link rel="stylesheet" th:href="@{/app.css}">
+
+</head>
+<body>
+<!-- Top Navbar -->
+<header class="topbar" th:replace="~{fragments/layout :: topbar}"></header>
+
+<!-- Left Sidebar -->
+<aside class="sidebar" th:replace="~{fragments/layout :: sidebar}"></aside>
+
+
+<!-- Main content -->
+<main class="main">
+    <div class="card">
+        <h2>Kế hoạch đã mua (Licenses của tôi)</h2>
+
+        <table class="table">
+            <thead>
+            <tr>
+                <th>Sản phẩm</th>
+                <th>Plan</th>
+                <th>Billing</th>
+                <th>Trạng thái</th>
+                <th>Issued</th>
+                <th>Expires</th>
+                <th style="width:180px">Hành động</th>
+            </tr>
+            </thead>
+            <tbody>
+            <tr th:if="${#lists.isEmpty(licenses)}">
+                <td colspan="7" class="muted">Bạn chưa mua gói nào.</td>
+            </tr>
+
+            <tr th:each="lic : ${licenses}">
+                <td th:text="${lic.plan.product.name}">Product</td>
+                <td>
+                    <div th:text="${lic.plan.name}">Plan Name</div>
+                    <div class="muted" th:text="'Mã: ' + ${lic.plan.code}">Code</div>
+                </td>
+                <td th:text="${lic.plan.billingType}">SUBSCRIPTION</td>
+                <td th:text="${lic.status}">ACTIVE</td>
+                <td th:text="${lic.issuedAt}">2025-11-05T00:00:00Z</td>
+                <td th:text="${lic.expiresAt != null ? lic.expiresAt : '—'}">—</td>
+                <td>
+                    <a class="btn" th:href="@{|/licenses/${lic.id}|}">Xem chi tiết</a>
+                    <a class="btn primary" th:href="@{|/licenses/${lic.id}/accounts|}">Sử dụng</a>
+                </td>
+            </tr>
+            </tbody>
+        </table>
+    </div>
+</main>
+
+</body>
+</html>

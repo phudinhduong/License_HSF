@@ -1,21 +1,10 @@
 package hsf302.he187383.phudd.license.repository;
 
-import hsf302.he187383.phudd.license.model.Wallet;
-import jakarta.persistence.LockModeType;
+import hsf302.he187383.phudd.license.model.*;
 import org.springframework.data.jpa.repository.JpaRepository;
-import org.springframework.data.jpa.repository.Lock;
-import org.springframework.data.jpa.repository.Query;
-import org.springframework.data.repository.query.Param;
 
-import java.util.Optional;
-import java.util.UUID;
+import java.util.*;
 
 public interface WalletRepository extends JpaRepository<Wallet, UUID> {
-    boolean existsByUserId(UUID userId);
-
-    @Lock(LockModeType.PESSIMISTIC_WRITE)
-    @Query("select w from Wallet w where w.user.id = :userId")
-    Optional<Wallet> lockByUserId(@Param("userId") UUID userId);
-
     Optional<Wallet> findByUserId(UUID userId);
 }

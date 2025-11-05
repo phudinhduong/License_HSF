@@ -1,75 +1,52 @@
 package hsf302.he187383.phudd.license.service;
 
-import hsf302.he187383.phudd.license.dto.product.*;
-import hsf302.he187383.phudd.license.mapper.ProductMapper;
-import hsf302.he187383.phudd.license.model.*;
+
+import hsf302.he187383.phudd.license.model.Product;
 import hsf302.he187383.phudd.license.repository.ProductRepository;
 import lombok.RequiredArgsConstructor;
-import org.springframework.dao.DataIntegrityViolationException;
-import org.springframework.data.domain.Page;
-import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
-import org.springframework.web.server.ResponseStatusException;
+import org.springframework.transaction.annotation.Transactional;
 
-import java.util.UUID;
-
-import static org.springframework.http.HttpStatus.*;
+import java.util.*;
 
 @Service
 @RequiredArgsConstructor
+@Transactional
 public class ProductService {
 
-    private final ProductRepository repo;
-    private final ProductMapper mapper;
+    private final ProductRepository productRepo;
 
-    public ProductResp create(ProductCreateReq req) {
-        // unique code
-        if (repo.existsByCodeIgnoreCase(req.getCode())) {
-            throw new ResponseStatusException(CONFLICT, "Product code already exists");
-        }
-        Product entity = mapper.toEntity(req);
-        entity = repo.save(entity);
-        return mapper.toResp(entity);
+    @Transactional(readOnly = true)
+    public List<Product> findAll() {
+        return productRepo.findAll();
     }
 
-    public ProductResp update(UUID id, ProductUpdateReq req) {
-        Product entity = repo.findById(id)
-                .orElseThrow(() -> new ResponseStatusException(NOT_FOUND, "Product not found"));
+    @Transactional(readOnly = true)
+    public Product findById(UUID id) {
+        return productRepo.findById(id)
+                .orElseThrow(() -> new IllegalArgumentException("Product not found"));
+    }
 
-        // unique code (excluding current)
-        if (repo.existsByCodeIgnoreCaseAndIdNot(req.getCode(), id)) {
-            throw new ResponseStatusException(CONFLICT, "Product code already exists");
-        }
+    @Transactional(readOnly = true)
+    public Product findByCode(String code) {
+        return productRepo.findByCode(code)
+                .orElseThrow(() -> new IllegalArgumentException("Product not found"));
+    }
 
-        mapper.update(entity, req); // MapStruct updates code/name/description
-        entity = repo.save(entity);
-        return mapper.toResp(entity);
+    public Product create(Product p) {
+        return productRepo.save(p);
+    }
+
+    public Product update(UUID id, Product p) {
+        var existing = findById(id);
+        existing.setCode(p.getCode());
+        existing.setName(p.getName());
+        existing.setDescription(p.getDescription());
+        return productRepo.save(existing);
     }
 
     public void delete(UUID id) {
-        Product entity = repo.findById(id)
-                .orElseThrow(() -> new ResponseStatusException(NOT_FOUND, "Product not found"));
-        try {
-            repo.delete(entity);
-        } catch (DataIntegrityViolationException e) {
-            // FK đang tham chiếu (Plan…)
-            throw new ResponseStatusException(CONFLICT, "Product is referenced by other records");
-        }
-    }
-
-    public ProductResp get(UUID id) {
-        return repo.findById(id)
-                .map(mapper::toResp)
-                .orElseThrow(() -> new ResponseStatusException(NOT_FOUND, "Product not found"));
-    }
-
-    public Page<ProductResp> list(String q, Pageable pageable) {
-        Page<Product> page;
-        if (q == null || q.isBlank()) {
-            page = repo.findAll(pageable);
-        } else {
-            page = repo.findByCodeContainingIgnoreCaseOrNameContainingIgnoreCase(q, q, pageable);
-        }
-        return page.map(mapper::toResp);
+        productRepo.deleteById(id);
     }
 }
+

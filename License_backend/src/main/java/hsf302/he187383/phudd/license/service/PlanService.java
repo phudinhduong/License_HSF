@@ -1,114 +1,70 @@
 package hsf302.he187383.phudd.license.service;
 
-import hsf302.he187383.phudd.license.dto.plan.*;
-import hsf302.he187383.phudd.license.dto.plan.PlanResp;
-import hsf302.he187383.phudd.license.enums.*;
-import hsf302.he187383.phudd.license.mapper.JpaRefResolver;
-import hsf302.he187383.phudd.license.mapper.*;
-import hsf302.he187383.phudd.license.model.*;
-import hsf302.he187383.phudd.license.repository.PlanRepository;
-import lombok.RequiredArgsConstructor;
-import org.springframework.dao.DataIntegrityViolationException;
-import org.springframework.data.domain.Page;
-import org.springframework.data.domain.Pageable;
-import org.springframework.http.HttpStatus;
-import org.springframework.stereotype.Service;
-import org.springframework.web.server.ResponseStatusException;
 
-import java.util.Objects;
-import java.util.UUID;
+import hsf302.he187383.phudd.license.model.Plan;
+import hsf302.he187383.phudd.license.repository.*;
+import lombok.RequiredArgsConstructor;
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
+
+import java.util.*;
+
 
 @Service
 @RequiredArgsConstructor
+@Transactional
 public class PlanService {
 
-    private final PlanRepository repo;
-    private final PlanMapper mapper;
-    private final JpaRefResolver ref;
+    private final PlanRepository planRepo;
+    private final ProductRepository productRepo;
 
-    public PlanResp create(PlanCreateReq req) {
-        // Unique: code per product
-        if (repo.existsByProductIdAndCodeIgnoreCase(req.getProductId(), req.getCode())) {
-            throw new ResponseStatusException(HttpStatus.CONFLICT, "Plan code already exists for this product");
-        }
-
-        validateBusiness(req.getBillingType(), req.getDurationDays());
-
-        Plan entity = mapper.toEntity(req, ref);
-
-        // Normalize currency default
-        if (entity.getCurrency() == null || entity.getCurrency().isBlank()) {
-            entity.setCurrency("USD");
-        }
-
-        // PERPETUAL => durationDays = null
-        if (entity.getBillingType() == BillingType.PERPETUAL) {
-            entity.setDurationDays(null);
-        }
-
-        entity = repo.save(entity);
-        return mapper.toResp(entity);
+    @Transactional(readOnly = true)
+    public List<Plan> findAll() {
+        return planRepo.findAll();
     }
 
-    public PlanResp update(UUID id, PlanUpdateReq req) {
-        Plan entity = repo.findById(id)
-                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Plan not found"));
+    @Transactional(readOnly = true)
+    public List<Plan> findByProduct(UUID productId) {
+        return planRepo.findByProductIdOrderByCreatedAtDesc(productId);
+    }
 
-        // Unique with possibly changed productId
-        if (repo.existsByProductIdAndCodeIgnoreCaseAndIdNot(req.getProductId(), req.getCode(), id)) {
-            throw new ResponseStatusException(HttpStatus.CONFLICT, "Plan code already exists for this product");
+    @Transactional(readOnly = true)
+    public Plan findById(UUID id) {
+        return planRepo.findById(id)
+                .orElseThrow(() -> new IllegalArgumentException("Plan not found"));
+    }
+
+    public Plan create(Plan p) {
+        // đảm bảo product hợp lệ
+        var product = productRepo.findById(p.getProduct().getId())
+                .orElseThrow(() -> new IllegalArgumentException("Product not found"));
+        p.setProduct(product);
+        return planRepo.save(p);
+    }
+
+    public Plan update(UUID id, Plan p) {
+        var existing = findById(id);
+        existing.setCode(p.getCode());
+        existing.setName(p.getName());
+        existing.setBillingType(p.getBillingType());
+        existing.setPriceCredits(p.getPriceCredits());
+        existing.setCurrency(p.getCurrency());
+        existing.setDurationDays(p.getDurationDays());
+        existing.setSeats(p.getSeats());
+        existing.setConcurrentLimitPerAccount(p.getConcurrentLimitPerAccount());
+        existing.setDeviceLimitPerAccount(p.getDeviceLimitPerAccount());
+
+        if (p.getProduct() != null) {
+            var prod = productRepo.findById(p.getProduct().getId())
+                    .orElseThrow(() -> new IllegalArgumentException("Product not found"));
+            existing.setProduct(prod);
         }
 
-        validateBusiness(req.getBillingType(), req.getDurationDays());
-
-        mapper.update(entity, req, ref);
-
-        // Normalize currency default
-        if (entity.getCurrency() == null || entity.getCurrency().isBlank()) {
-            entity.setCurrency("USD");
-        }
-
-        if (entity.getBillingType() == BillingType.PERPETUAL) {
-            entity.setDurationDays(null);
-        }
-
-        entity = repo.save(entity);
-        return mapper.toResp(entity);
+        return planRepo.save(existing);
     }
 
     public void delete(UUID id) {
-        Plan entity = repo.findById(id)
-                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Plan not found"));
-        try {
-            repo.delete(entity);
-        } catch (DataIntegrityViolationException ex) {
-            // Đang bị Order/License tham chiếu
-            throw new ResponseStatusException(HttpStatus.CONFLICT, "Plan is referenced by other records");
-        }
-    }
-
-    public PlanResp get(UUID id) {
-        return repo.findById(id)
-                .map(mapper::toResp)
-                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Plan not found"));
-    }
-
-    public Page<PlanResp> list(UUID productId, String q, Pageable pageable) {
-        String qq = (q == null || q.isBlank()) ? null : q.trim();
-        Page<Plan> page = repo.search(productId, qq, pageable);
-        return page.map(mapper::toResp);
-    }
-
-    private void validateBusiness(BillingType billingType, Integer durationDays) {
-        if (billingType == BillingType.SUBSCRIPTION) {
-            if (durationDays == null || durationDays <= 0) {
-                throw new ResponseStatusException(HttpStatus.UNPROCESSABLE_ENTITY,
-                        "SUBSCRIPTION requires durationDays > 0");
-            }
-        } else if (billingType == BillingType.PERPETUAL) {
-            // allow null/0; service sẽ normalize thành null
-        } else {
-            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Unknown billing type");
-        }
+        planRepo.deleteById(id);
     }
 }
+
