@@ -10,4 +10,5 @@ import java.util.UUID;
 public interface WalletTxnRepository extends JpaRepository<WalletTxn, UUID> {
     Optional<WalletTxn> findByIdempotencyKey(String idempotencyKey);
     List<WalletTxn> findByWalletIdOrderByCreatedAtDesc(UUID walletId);
+    boolean existsByIdempotencyKey(String idempotencyKey);
 }

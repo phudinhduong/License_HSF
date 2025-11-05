@@ -3,12 +3,24 @@ spring:
     url: jdbc:sqlserver://localhost:1433;databaseName=license;encrypt=true;trustServerCertificate=true
     username: sa
     password: sa
+    driver-class-name: com.microsoft.sqlserver.jdbc.SQLServerDriver
+
   jpa:
     hibernate:
-      ddl-auto: create-drop
+      ddl-auto: update      # nên dùng update để giữ dữ liệu
     properties:
-      hibernate.dialect: org.hibernate.dialect.SQLServerDialect
-      hibernate.jdbc.time_zone: UTC
+      hibernate:
+        dialect: org.hibernate.dialect.SQLServerDialect
+        format_sql: true
+        show_sql: true
+        jdbc.time_zone: UTC
+
+  thymeleaf:
+    cache: false             # tắt cache để dev Thymeleaf tiện chỉnh giao diện
+    prefix: classpath:/templates/
+    suffix: .html
+    mode: HTML
+
   mvc:
     log-request-details: true   # log th�m method, headers c? b?n
 
@@ -52,4 +64,17 @@ app:
 #
 #
 #    hsf302.he187383.phudd.license: DEBUG
+logging:
+  level:
+    org.springframework.web: INFO
+    org.hibernate.SQL: DEBUG
+    org.hibernate.orm.jdbc.bind: TRACE
+    org.springframework.security: INFO
+    com.zaxxer.hikari: INFO
 
+vnpay:
+  tmnCode: "XDCKXC4A"
+  secretKey: "B1CEZQLM1OETVH5DXHOLDL4G1GC4QZX7"
+  payUrl: "https://sandbox.vnpayment.vn/paymentv2/vpcpay.html"
+  returnUrl: "http://localhost:8081/wallet/vnpay-return"
+  ipnUrl: "http://localhost:8080/carrental/api/payment/vnpay-ipn"

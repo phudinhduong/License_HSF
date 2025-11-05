@@ -9,31 +9,33 @@ import java.math.BigDecimal;
 @Entity
 @Table(name = "topups")
 @Getter @Setter @Builder
-@NoArgsConstructor @AllArgsConstructor @EqualsAndHashCode(of = "id")
+@NoArgsConstructor @AllArgsConstructor
 public class Topup extends BaseEntity {
 
     @ManyToOne(optional = false, fetch = FetchType.LAZY)
-    @JoinColumn(name = "user_id", nullable = false,
-            foreignKey = @ForeignKey(name = "fk_topup_user"))
+    @JoinColumn(name = "user_id", nullable = false)
     private User user;
 
     @Enumerated(EnumType.STRING)
     @Column(nullable = false, length = 16)
-    private PaymentProvider provider;
+    private PaymentProvider provider = PaymentProvider.VNPAY;
 
     @Column(nullable = false, precision = 19, scale = 4)
     private BigDecimal moneyAmount;
 
     @Column(nullable = false, length = 8)
-    private String currency;
+    private String currency = "VND";
 
     @Column(nullable = false)
     private Long creditsGranted;
 
     @Enumerated(EnumType.STRING)
     @Column(nullable = false, length = 16)
-    private TopupStatus status;
+    private TopupStatus status = TopupStatus.PENDING;
 
     @Column(length = 128)
-    private String paymentRef;
+    private String paymentRef; // mã giao dịch VNPAY trả về
+
+    @Column(length = 128, unique = true)
+    private String idempotencyKey; // khóa để tránh cộng trùng
 }

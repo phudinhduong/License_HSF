@@ -1,14 +1,18 @@
 package hsf302.he187383.phudd.licensev3.model;
 
-import hsf302.he187383.phudd.licensev3.enums.*;
+import hsf302.he187383.phudd.licensev3.enums.WalletStatus;
 import jakarta.persistence.*;
 import lombok.*;
 
 @Entity
 @Table(name = "wallets",
-        uniqueConstraints = @UniqueConstraint(name = "uk_wallets_user", columnNames = "user_id"))
-@Getter @Setter @Builder
-@NoArgsConstructor @AllArgsConstructor @EqualsAndHashCode(of = "id")
+        uniqueConstraints = @UniqueConstraint(name = "uk_wallet_user", columnNames = "user_id"))
+@Getter
+@Setter
+@Builder
+@NoArgsConstructor
+@AllArgsConstructor
+@EqualsAndHashCode(of = "id")
 public class Wallet extends BaseEntity {
 
     @OneToOne(optional = false, fetch = FetchType.LAZY)
@@ -21,5 +25,5 @@ public class Wallet extends BaseEntity {
 
     @Enumerated(EnumType.STRING)
     @Column(nullable = false, length = 16)
-    private WalletStatus status;
+    private WalletStatus status; // ACTIVE / LOCKED / SUSPENDED
 }

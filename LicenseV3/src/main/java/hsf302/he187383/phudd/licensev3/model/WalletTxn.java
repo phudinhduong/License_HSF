@@ -9,8 +9,12 @@ import java.util.UUID;
 @Entity
 @Table(name = "wallet_txns",
         uniqueConstraints = @UniqueConstraint(name = "uk_wallet_txns_idem", columnNames = "idempotency_key"))
-@Getter @Setter @Builder
-@NoArgsConstructor @AllArgsConstructor @EqualsAndHashCode(of = "id")
+@Getter
+@Setter
+@Builder
+@NoArgsConstructor
+@AllArgsConstructor
+@EqualsAndHashCode(of = "id")
 public class WalletTxn extends BaseEntity {
 
     @ManyToOne(optional = false, fetch = FetchType.LAZY)
@@ -20,11 +24,11 @@ public class WalletTxn extends BaseEntity {
 
     @Enumerated(EnumType.STRING)
     @Column(nullable = false, length = 16)
-    private WalletTxnType type;
+    private WalletTxnType type; // TOPUP / PURCHASE / REFUND / WITHDRAW
 
     @Enumerated(EnumType.STRING)
     @Column(nullable = false, length = 8)
-    private WalletTxnDirection direction;
+    private WalletTxnDirection direction; // IN  / OUT
 
     @Column(nullable = false)
     private Long amount;
@@ -32,22 +36,17 @@ public class WalletTxn extends BaseEntity {
     @Column(nullable = false)
     private Long balanceAfter;
 
+    @Enumerated(EnumType.STRING)
     @Column(nullable = false, length = 16)
-    private String status; // PENDING/COMPLETED/FAILED/REVERSED
+    private WalletTxnStatus status; // PENDING / COMPLETED / FAILED / REVERSED
 
     @Column(name = "ref_type", length = 64)
-    private String refType;
+    private Topup_Ref_Type refType; // Loại liên kết: "TOPUP", "ORDER", "REFUND"...
 
     @Column(name = "ref_id", columnDefinition = "uniqueidentifier")
-    private UUID refId;
+    private UUID refId; // ID của bản ghi tham chiếu (VD: Topup ID, Order ID)
 
     @Column(name = "idempotency_key", length = 128, nullable = false)
-    private String idempotencyKey;
+    private String idempotencyKey; // Đảm bảo không trùng lặp giao dịch
 
-    public void setId(UUID walletTxnId) {
-        this.id = UUID.randomUUID();
-    }
-
-//    @Column(nullable = false)
-//    private Instant createdAt = Instant.now();
 }

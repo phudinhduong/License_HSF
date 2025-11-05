@@ -83,10 +83,10 @@ public class DataSeeder implements CommandLineRunner {
                     .direction(delta >= 0 ? WalletTxnDirection.IN : WalletTxnDirection.OUT)
                     .amount(Math.abs(delta))
                     .balanceAfter(w.getBalance())
-                    .status("COMPLETED")
-                    .refType("SEED")
+                    .status(WalletTxnStatus.COMPLETED)
+                    .refType(Topup_Ref_Type.TOPUP)
                     .refId(null)
-                    .idempotencyKey("SEED-" + u.getEmail())
+                    .idempotencyKey("TOPUP-" + u.getEmail())
                     .build();
             walletTxnRepo.save(txn);
         }
