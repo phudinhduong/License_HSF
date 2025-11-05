@@ -60,9 +60,9 @@
                 <td th:text="${#numbers.formatDecimal(pl.priceCredits, 1, 0)}">10000</td>
 <!--                <td th:text="${pl.currency}">USD</td>-->
                 <td th:text="${pl.durationDays != null and pl.durationDays > 0 ? pl.durationDays + ' ngày' : 'Perpetual'}">Perpetual</td>
-                <td th:text="${pl.seats} ?: '-'">-</td>
-                <td th:text="${pl.concurrentLimitPerAccount} ?: '-'">-</td>
-                <td th:text="${pl.deviceLimitPerAccount} ?: '-'">-</td>
+                <td th:text="${pl.seats} ?: 'no limit'">-</td>
+                <td th:text="${pl.concurrentLimitPerAccount} ?: 'no limit'">-</td>
+                <td th:text="${pl.deviceLimitPerAccount} ?: 'no limit'">-</td>
                 <td>
                     <form th:action="@{/orders/buy}" method="post">
                         <input type="hidden" name="planId" th:value="${pl.id}">

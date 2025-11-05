@@ -1,0 +1,43 @@
+<!doctype html>
+<html lang="vi" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width,initial-scale=1">
+    <title>Thông tin phiên</title>
+    <style>
+        body{font-family:system-ui,-apple-system,Segoe UI,Roboto,Arial,sans-serif;background:#0b0f14;color:#e6edf3;padding:24px}
+        .card{background:#111827;border:1px solid #1f2937;border-radius:16px;padding:24px;max-width:800px;margin:0 auto;box-shadow:0 8px 24px rgba(0,0,0,.3)}
+        h1{margin-top:0;font-size:22px}
+        table{width:100%;border-collapse:collapse;margin:8px 0}
+        th,td{padding:8px 10px;border-bottom:1px solid #1f2937;text-align:left}
+        .btn{display:inline-block;padding:10px 14px;border-radius:10px;border:1px solid #374151;background:#1f2937;color:#e5e7eb;cursor:pointer}
+        .btn.danger{background:#b91c1c;border-color:#7f1d1d}
+        code{color:#93c5fd}
+    </style>
+</head>
+<body>
+<div class="card">
+    <h1>Xin chào, <span th:text="${u.username}">username</span></h1>
+
+    <h3>Thông tin License</h3>
+    <table>
+        <tr><th>Product</th><td><span th:text="${u.productName}">Product</span> (<code th:text="${u.productCode}">CODE</code>)</td></tr>
+        <tr><th>Plan</th><td><span th:text="${u.planName}">Plan</span> (<code th:text="${u.planCode}">PLAN</code>) – <span th:text="${u.billingType}">PERPETUAL</span></td></tr>
+        <tr><th>Status</th><td th:text="${u.licenseStatus}">ACTIVE</td></tr>
+        <tr><th>Expires</th><td th:text="${u.expiresAt != null ? u.expiresAt : '—'}">—</td></tr>
+    </table>
+
+    <h3>Thông tin phiên</h3>
+    <table>
+        <tr><th>Account ID</th><td><code th:text="${u.accountId}">...</code></td></tr>
+        <tr><th>License ID</th><td><code th:text="${u.licenseId}">...</code></td></tr>
+        <tr><th>JTI</th><td><code th:text="${u.jti}">...</code></td></tr>
+        <tr><th>Device ID</th><td><code th:text="${u.deviceId}">...</code></td></tr>
+    </table>
+
+    <form method="post" th:action="@{/logout}" style="margin-top:16px">
+        <button type="submit" class="btn danger">Đăng xuất</button>
+    </form>
+</div>
+</body>
+</html>

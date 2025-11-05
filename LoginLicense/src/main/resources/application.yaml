@@ -1,0 +1,12 @@
+server:
+  port: 8082
+
+app:
+  license:
+    base-url: "http://localhost:8081"   # URL c?a A (License/Auth) ? ??i cho ?úng c?ng d? án A
+    connect-timeout-ms: 3000
+    read-timeout-ms: 5000
+
+spring:
+  thymeleaf:
+    cache: false
