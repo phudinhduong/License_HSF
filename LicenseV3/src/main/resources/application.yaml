@@ -3,46 +3,41 @@ spring:
     url: jdbc:sqlserver://localhost:1433;databaseName=license;encrypt=true;trustServerCertificate=true
     username: sa
     password: sa
+    driver-class-name: com.microsoft.sqlserver.jdbc.SQLServerDriver
+
   jpa:
     hibernate:
-      ddl-auto: create-drop
+      ddl-auto: update      # nÃªn dÃ¹ng update Ä‘á»ƒ giá»¯ dá»¯ liá»‡u
     properties:
-      hibernate.dialect: org.hibernate.dialect.SQLServerDialect
-      hibernate.jdbc.time_zone: UTC
+      hibernate:
+        dialect: org.hibernate.dialect.SQLServerDialect
+        format_sql: true
+        show_sql: true
+        jdbc.time_zone: UTC
+
+  thymeleaf:
+    cache: false             # táº¯t cache Ä‘á»ƒ dev Thymeleaf tiá»‡n chá»‰nh giao diá»‡n
+    prefix: classpath:/templates/
+    suffix: .html
+    mode: HTML
+
   mvc:
-    log-request-details: true   # log thêm method, headers c? b?n
+    log-request-details: true
 
 server:
   port: 8081
 
-#logging:
-#  level:
-#    # ===== Spring Security =====
-#    org.springframework.security: DEBUG
-#    org.springframework.security.web.FilterChainProxy: DEBUG   # th?y filter nào ch?y
-#    org.springframework.security.web.access: DEBUG             # quy?t ??nh cho/không cho
-#    org.springframework.security.web.csrf: DEBUG               # l?i CSRF (n?u có)
-#    org.springframework.security.oauth2: DEBUG
-#    org.springframework.security.oauth2.server.resource: DEBUG # resource server JWT
-#
-#    # ===== Web MVC =====
-#    org.springframework.web: DEBUG
-#    org.springframework.web.servlet.DispatcherServlet: DEBUG    # mapping -> handler
-#    org.springframework.web.servlet.handler: TRACE              # ch?n handler nào
-#    org.springframework.web.filter.CommonsRequestLoggingFilter: DEBUG
-#
-#    # ===== JPA / Hibernate (Boot 3 / Hibernate 6) =====
-#    org.hibernate.SQL: DEBUG                 # câu SQL
-#    org.hibernate.orm.jdbc.bind: TRACE       # giá tr? bind ?1, ?2
-#    # (N?u dùng Hibernate 5, thêm cái d??i cho ch?c)
-#    org.hibernate.type.descriptor.sql.BasicBinder: TRACE
-#
-#    # ===== Transaction / JDBC =====
-#    org.springframework.orm.jpa: DEBUG
-#    org.springframework.transaction.interceptor: TRACE
-#    org.springframework.jdbc.core: DEBUG
-#    com.zaxxer.hikari: DEBUG                 # connection pool
-#
-#
-#    hsf302.he187383.phudd.license: DEBUG
+logging:
+  level:
+    org.springframework.web: INFO
+    org.hibernate.SQL: DEBUG
+    org.hibernate.orm.jdbc.bind: TRACE
+    org.springframework.security: INFO
+    com.zaxxer.hikari: INFO
 
+vnpay:
+  tmnCode: "XDCKXC4A"
+  secretKey: "B1CEZQLM1OETVH5DXHOLDL4G1GC4QZX7"
+  payUrl: "https://sandbox.vnpayment.vn/paymentv2/vpcpay.html"
+  returnUrl: "http://localhost:8081/wallet/vnpay-return"
+  ipnUrl: "http://localhost:8080/carrental/api/payment/vnpay-ipn"

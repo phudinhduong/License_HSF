@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Kết quả nạp tiền</title>
+    <link rel="stylesheet" href="/css/bootstrap.min.css">
+</head>
+<body class="container mt-5">
+
+<h2>Kết quả nạp tiền</h2>
+
+<!-- Trạng thái giao dịch -->
+<div th:switch="${status}">
+    <div th:case="'success'" class="alert alert-success">
+        <h4>✔ Thành công!</h4>
+        <p th:text="${message}"></p>
+    </div>
+    <div th:case="'failed'" class="alert alert-danger">
+        <h4>✖ Thất bại</h4>
+        <p th:text="${message}"></p>
+    </div>
+    <div th:case="'error'" class="alert alert-warning">
+        <h4>⚠ Lỗi</h4>
+        <p th:text="${message}"></p>
+    </div>
+</div>
+
+<!-- Thông tin chi tiết giao dịch -->
+<div class="card mt-4">
+    <div class="card-header">Thông tin giao dịch</div>
+    <div class="card-body">
+        <p><strong>Mã tham chiếu (TxnRef):</strong> <span th:text="${txnRef}"></span></p>
+        <p><strong>Mã giao dịch VNPay:</strong> <span th:text="${transactionNo}"></span></p>
+        <p><strong>Số tiền:</strong> <span th:text="${amount} + ' VNĐ'"></span></p>
+        <p><strong>Ngày thanh toán:</strong> <span th:text="${payDate}"></span></p>
+        <p><strong>Loại giao dịch:</strong> <span th:text="${orderInfo}"></span></p>
+    </div>
+</div>
+
+<a href="/" class="btn btn-primary mt-4">Quay về trang chủ</a>
+
+</body>
+</html>
