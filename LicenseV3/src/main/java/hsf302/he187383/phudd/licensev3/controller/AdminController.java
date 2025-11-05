@@ -17,52 +17,72 @@ public class AdminController {
     // Danh sách sản phẩm
     @GetMapping
     public String listProducts(Model model) {
+        model.addAttribute("product", new Product());
         model.addAttribute("products", productService.findAll());
         return "admin/list-product";
     }
 
-    // Hiển thị form thêm
-    @GetMapping("/add")
-    public String showAddForm(Model model) {
-        model.addAttribute("product", new Product());
-        return "admin/form-product";
-    }
+//    // Hiển thị form thêm
+//    @GetMapping("/add")
+//    public String showAddForm(Model model) {
+//        model.addAttribute("product", new Product());
+//        return "admin/form-product";
+//    }
 
-    // Xử lý thêm sản phẩm
-    @PostMapping("/add")
-    public String addProduct(@ModelAttribute Product product) {
-        productService.create(product);
-        return "redirect:/admin";
-    }
+//    // Xử lý thêm sản phẩm
+//    @PostMapping("/add")
+//    public String addProduct(@ModelAttribute Product product) {
+//        productService.create(product);
+//        return "redirect:/admin";
+//    }
 
-    // Hiển thị form sửa
-    @GetMapping("/edit/{id}")
+    // bind dữ liệu vào form sửa
+    @GetMapping("/product/edit/{id}")
     public String showEditForm(@PathVariable UUID id, Model model) {
         model.addAttribute("product", productService.findById(id));
-        return "admin/form-product"; // dùng lại cùng template
+        return "admin/list-product";
     }
 
-    // Xử lý cập nhật sản phẩm
-    @PostMapping("/edit/{id}")
-    public String updateProduct(@PathVariable UUID id, @ModelAttribute Product product) {
-        productService.update(id, product);
+//    // Xử lý cập nhật sản phẩm
+//    @PostMapping("/edit/{id}")
+//    public String updateProduct(@PathVariable UUID id, @ModelAttribute Product product) {
+//        productService.update(id, product);
+//        return "redirect:/admin";
+//    }
+
+    //thêm hoặc sửa product theo kiểm tra id
+    @PostMapping("/product/save")
+    public String saveProduct(@ModelAttribute Product product, @RequestParam(value = "id", required = false) String idStr) {
+        if (idStr == null) {
+            // Thêm mới
+            productService.create(product);
+        } else {
+            try {
+                //update
+                productService.update(UUID.fromString(idStr), product);
+            } catch (RuntimeException e) {
+                throw new RuntimeException(e);
+            }
+        }
         return "redirect:/admin";
     }
 
     // Ẩn sản phẩm (soft delete)
-    @PostMapping("/hide/{id}")
+    @GetMapping("/product/hide/{id}")
     public String hideProduct(@PathVariable UUID id) {
         Product p = productService.findById(id);
         p.setHidden(true);
+        System.out.println(p.isHidden());
         productService.update(p.getId(), p);
         return "redirect:/admin";
     }
 
     // Hiển thị lại sản phẩm bị ẩn
-    @PostMapping("/unhide/{id}")
+    @GetMapping("/product/unhide/{id}")
     public String unhideProduct(@PathVariable UUID id) {
         Product p = productService.findById(id);
         p.setHidden(false);
+        System.out.println(p.isHidden());
         productService.update(p.getId(), p);
         return "redirect:/admin";
     }

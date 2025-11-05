@@ -10,4 +10,5 @@ import java.util.UUID;
 public interface PlanRepository extends JpaRepository<Plan, UUID> {
     List<Plan> findByProductIdOrderByCreatedAtDesc(UUID productId);
     Optional<Plan> findByProductIdAndCode(UUID productId, String code);
+    void deletePlanByProduct_Id(UUID productId);
 }
