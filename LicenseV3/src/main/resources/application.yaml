@@ -1,6 +1,6 @@
 spring:
   datasource:
-    url: jdbc:sqlserver://localhost:1433;databaseName=license;encrypt=true;trustServerCertificate=true
+    url: jdbc:sqlserver://localhost:1433;databaseName=assignment_hsf;encrypt=true;trustServerCertificate=true
     username: sa
     password: sa
   jpa:
