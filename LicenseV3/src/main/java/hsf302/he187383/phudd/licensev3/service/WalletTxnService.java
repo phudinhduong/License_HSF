@@ -65,7 +65,7 @@ public class WalletTxnService {
         return txnRepo.save(txn);
     }
 
-    public Page<WalletTxn> searchTxns(UUID walletId, WalletTxnDirection direction, Ref_Type refType,
+    public Page<WalletTxn> adminSearchTxns(UUID walletId, WalletTxnDirection direction, Ref_Type refType,
                                       LocalDateTime from, LocalDateTime to, int page, int size) {
         Pageable pageable = PageRequest.of(page, size);
 
@@ -73,6 +73,17 @@ public class WalletTxnService {
         Instant toInstant = (to != null) ? to.atZone(ZoneId.systemDefault()).toInstant() : null;
 
         return txnRepo.searchTxns(walletId, direction, refType, fromInstant, toInstant, pageable);
+    }
+
+    public Page<WalletTxn> searchTxns(UUID walletId,
+                                      WalletTxnDirection direction,
+                                      Ref_Type refType,
+                                      Instant from,
+                                      Instant to,
+                                      int page,
+                                      int size) {
+        Pageable pageable = PageRequest.of(page, size);
+        return txnRepo.searchTxns(walletId, direction, refType, from, to, pageable);
     }
 
 }

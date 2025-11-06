@@ -2,14 +2,10 @@ package hsf302.he187383.phudd.licensev3.controller;
 
 import hsf302.he187383.phudd.licensev3.config.SecurityConfig;
 import hsf302.he187383.phudd.licensev3.model.Topup;
-import hsf302.he187383.phudd.licensev3.repository.UserRepository;
 import hsf302.he187383.phudd.licensev3.service.TopupService;
 import hsf302.he187383.phudd.licensev3.service.VNPayService;
 import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
-import org.springframework.security.core.Authentication;
-import org.springframework.security.core.context.SecurityContextHolder;
-import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;

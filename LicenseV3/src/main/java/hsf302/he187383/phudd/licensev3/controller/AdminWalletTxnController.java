@@ -33,7 +33,7 @@ public class AdminWalletTxnController {
                            @RequestParam(defaultValue = "10") int size,
                            Model model) {
 
-        Page<WalletTxn> txns = walletTxnService.searchTxns(walletId, direction, refType, from, to, page, size);
+        Page<WalletTxn> txns = walletTxnService.adminSearchTxns(walletId, direction, refType, from, to, page, size);
 
         model.addAttribute("txns", txns);
         model.addAttribute("wallets", walletRepository.findAll());
