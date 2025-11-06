@@ -1,0 +1,4 @@
+#!/bin/sh
+JLINK_VM_OPTIONS=
+DIR=`dirname $0`
+$DIR/java $JLINK_VM_OPTIONS -m hsf302.he180446.duonghd.democlient/hsf302.he180446.duonghd.democlient.controller.MainApp "$@"

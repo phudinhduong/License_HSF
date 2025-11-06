@@ -1,5 +1,6 @@
 package hsf302.he187383.phudd.licensev3.config;
 
+import hsf302.he187383.phudd.licensev3.utils.JwtLicenseUtil;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -7,10 +8,12 @@ import org.springframework.core.annotation.Order;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.annotation.web.configuration.WebSecurityCustomizer;
+import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
+import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 
 @Configuration
 @EnableWebSecurity
@@ -57,6 +60,26 @@ public class SecurityConfig {
                 .userDetailsService(userDetailsService);
 
         return http.build();
+    }
+
+    @Bean
+    @Order(1)
+    public SecurityFilterChain licenseApiSecurity(HttpSecurity http, LicenseJwtFilter licenseJwtFilter) throws Exception {
+        http
+                .securityMatcher("/api/license/**")
+                .csrf(csrf -> csrf.disable())
+                .sessionManagement(sm -> sm.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
+                .authorizeHttpRequests(auth -> auth
+                        .requestMatchers("/api/license/activate").permitAll()
+                        .anyRequest().authenticated())
+                .addFilterBefore(licenseJwtFilter, UsernamePasswordAuthenticationFilter.class);
+
+        return http.build();
+    }
+
+    @Bean
+    public LicenseJwtFilter licenseJwtFilter(JwtLicenseUtil jwtLicenseUtil) {
+        return new LicenseJwtFilter(jwtLicenseUtil);
     }
 
     @Bean
