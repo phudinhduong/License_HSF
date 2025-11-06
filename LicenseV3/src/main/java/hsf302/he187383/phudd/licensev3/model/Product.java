@@ -19,4 +19,7 @@ public class Product extends BaseEntity {
 
     @Lob
     private String description;
+
+    @Column(nullable = false)
+    private boolean hidden = false;
 }

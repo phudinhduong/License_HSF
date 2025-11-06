@@ -2,6 +2,7 @@ package hsf302.he187383.phudd.licensev3.service;
 
 
 import hsf302.he187383.phudd.licensev3.model.Product;
+import hsf302.he187383.phudd.licensev3.repository.PlanRepository;
 import hsf302.he187383.phudd.licensev3.repository.ProductRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -16,6 +17,7 @@ import java.util.UUID;
 public class ProductService {
 
     private final ProductRepository productRepo;
+    private final PlanRepository planRepository;
 
     @Transactional(readOnly = true)
     public List<Product> findAll() {
@@ -40,13 +42,15 @@ public class ProductService {
 
     public Product update(UUID id, Product p) {
         var existing = findById(id);
-        existing.setCode(p.getCode());
+//        existing.setCode(p.getCode());
         existing.setName(p.getName());
         existing.setDescription(p.getDescription());
         return productRepo.save(existing);
     }
 
     public void delete(UUID id) {
+        System.out.println("aaaaaaa và");
+        planRepository.deletePlanByProduct_Id(id);
         productRepo.deleteById(id);
     }
 }
