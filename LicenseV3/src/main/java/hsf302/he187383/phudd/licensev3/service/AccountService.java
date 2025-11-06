@@ -27,6 +27,7 @@ public class AccountService {
     public Account create(UUID licenseId, String username, String passwordHash) {
         var license = licenseRepo.findById(licenseId)
                 .orElseThrow(() -> new IllegalArgumentException("License not found"));
+
         var acc = Account.builder()
                 .license(license)
                 .username(username)

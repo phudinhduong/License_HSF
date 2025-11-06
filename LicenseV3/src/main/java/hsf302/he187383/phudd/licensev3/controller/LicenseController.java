@@ -4,6 +4,7 @@ import hsf302.he187383.phudd.licensev3.enums.AccountStatus;
 import hsf302.he187383.phudd.licensev3.model.*;
 import hsf302.he187383.phudd.licensev3.repository.*;
 import hsf302.he187383.phudd.licensev3.service.AccountService;
+import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.security.authentication.AnonymousAuthenticationToken;
@@ -14,6 +15,7 @@ import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
+import java.util.List;
 import java.util.UUID;
 
 @Controller
@@ -37,17 +39,26 @@ public class LicenseController {
     }
 
     @GetMapping("/{licenseId}/accounts")
-    public String accounts(@PathVariable UUID licenseId, Authentication auth, Model model) {
+    public String accounts(@PathVariable UUID licenseId,
+                           Authentication auth,
+                           Model model,
+                           HttpServletResponse resp) {
         var user = requireUser(auth);
-        var license = licenseRepo.findByIdAndUserId(licenseId, user.getId())
-                .orElseThrow(() -> new IllegalArgumentException("License not found"));
+        var opt = licenseRepo.findByIdAndUserId(licenseId, user.getId());
 
-        
+        if (opt.isEmpty()) {
+            // tuỳ chọn: resp.setStatus(404);
+            model.addAttribute("error", "License không tồn tại hoặc không thuộc về bạn.");
+            model.addAttribute("accounts", List.of()); // tránh NullPointer trong view
+            return "licenses/accounts";                // view tự hiển thị alert error
+        }
 
+        var license = opt.get();
         model.addAttribute("license", license);
         model.addAttribute("accounts", accountService.findByLicense(licenseId));
         return "licenses/accounts";
     }
+
 
     // ===== Form tạo mới
     @GetMapping("/{licenseId}/accounts/new")

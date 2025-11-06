@@ -212,3 +212,76 @@ body.login-page {
     font-size: 13px;
 }
 
+/* ===== Alert base ===== */
+.alert {
+    --radius: 10px;
+    --pad: 12px 14px;
+    --shadow: 0 6px 18px rgba(0,0,0,.08);
+    position: relative;
+    display: block;
+    padding: var(--pad);
+    border-radius: var(--radius);
+    border-left: 6px solid currentColor;
+    box-shadow: var(--shadow);
+    font: 500 14px/1.5 system-ui, -apple-system, "Segoe UI", Roboto, Arial, sans-serif;
+    animation: alert-in .25s ease-out both;
+}
+
+/* icon bằng pseudo */
+.alert::before {
+    content: "ℹ️";
+    margin-right: 10px;
+    font-size: 16px;
+}
+
+/* ===== Success ===== */
+.alert.success {
+    color: #137333;                           /* text + border-left màu */
+    background: #e9f7ef;                      /* nền nhạt */
+    border: 1px solid #cde9d7;                /* viền */
+}
+.alert.success::before { content: "✅"; }
+
+/* ===== Error ===== */
+.alert.error {
+    color: #b3261e;
+    background: #fdecea;
+    border: 1px solid #f5c9c6;
+}
+.alert.error::before { content: "⛔"; }
+
+/* spacing chữ */
+.alert.success, .alert.error {
+    display: flex;
+    align-items: flex-start;
+    gap: 6px;
+}
+
+/* Link trong alert (nếu có) */
+.alert a {
+    color: inherit;
+    text-decoration: underline;
+    text-underline-offset: 2px;
+}
+
+/* ===== Dark mode ===== */
+@media (prefers-color-scheme: dark) {
+    .alert.success {
+        color: #7fe2a0;
+        background: #0f1a14;
+        border-color: #244f34;
+    }
+    .alert.error {
+        color: #ffb4ab;
+        background: #1f1211;
+        border-color: #58312d;
+    }
+}
+
+/* Hiệu ứng vào */
+@keyframes alert-in {
+    from { opacity: 0; transform: translateY(-4px); }
+    to   { opacity: 1; transform: translateY(0); }
+}
+
+

@@ -6,8 +6,9 @@ import jakarta.persistence.*;
 import lombok.*;
 
 @Entity
-@Table(name = "accounts",
-        uniqueConstraints = @UniqueConstraint(name = "uk_accounts_username", columnNames = "username"))
+@Table(name = "accounts"
+        ,uniqueConstraints = @UniqueConstraint(name = "uk_accounts_username", columnNames = "username")
+)
 @Getter @Setter @Builder
 @NoArgsConstructor @AllArgsConstructor @EqualsAndHashCode(of = "id")
 public class Account extends BaseEntity {

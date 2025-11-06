@@ -26,40 +26,45 @@ public class OrderController {
     private final WalletService walletService;
     private final LicenseService licenseService;
 
-//    @PostMapping("/buy")
-//    public String buy(@RequestParam UUID planId,
-//                      @RequestParam(required = false) UUID productId,
-//                      RedirectAttributes ra) {
-//
-//        var auth = SecurityContextHolder.getContext().getAuthentication();
-//        if (auth == null || !auth.isAuthenticated() || auth instanceof AnonymousAuthenticationToken) {
-//            return "redirect:/login";
-//        }
-//
-//        var user = userRepo.findByEmail(auth.getName())
-//                .orElseThrow(() -> new IllegalArgumentException("User not found"));
-//        var plan = planService.findById(planId);
-//
-//        // 1) Tạo Order PENDING
-//        var order = orderService.create(user.getId(), plan.getId(), plan.getPriceCredits(), null);
-//
-//        try {
-//            // 2) WalletTxn PURCHASE (OUT) với idempotencyKey
-//            var idemKey = "ORDER-" + order.getId(); // đủ ổn cho demo
-//            var txn = walletService.purchase(user.getId(), plan.getPriceCredits(), idemKey, "ORDER", order.getId());
-//
-//            // 3) Mark PAID + gán txn vào Order
-//            orderService.markPaidWithTxn(order.getId(), txn.getId());
-//
-//            // 4) Issue License
-//            var licenseKey = UUID.randomUUID().toString().replace("-", "").toUpperCase();
-//            licenseService.issueLicense(order.getId(), licenseKey);
-//
-//            ra.addFlashAttribute("success", "Mua gói thành công! License key: " + licenseKey);
-//        } catch (IllegalStateException e) {
-//            ra.addFlashAttribute("error", "Số dư không đủ. Vui lòng nạp thêm credits trước khi mua.");
-//        }
-//
-//        return (productId != null) ? ("redirect:/products/" + productId) : "redirect:/products";
-//    }
+    @PostMapping("/buy")
+    public String buy(@RequestParam UUID planId,
+                      @RequestParam(required = false) UUID productId,
+                      RedirectAttributes ra) {
+
+        var auth = SecurityContextHolder.getContext().getAuthentication();
+        if (auth == null || !auth.isAuthenticated() || auth instanceof AnonymousAuthenticationToken) {
+            return "redirect:/login";
+        }
+
+        var user = userRepo.findByEmail(auth.getName())
+                .orElseThrow(() -> new IllegalArgumentException("User not found"));
+        var plan = planService.findById(planId);
+
+        // 1) Tạo Order PENDING
+        var order = orderService.create(user.getId(), plan.getId(), plan.getPriceCredits(), null);
+
+        if (order == null) {
+            ra.addFlashAttribute("error", "Mỗi tài khoản chỉ mua 1 lần.");
+            return ("redirect:/products/" + productId) ;
+        } else {
+            try {
+                // 2) WalletTxn PURCHASE (OUT) với idempotencyKey
+                var idemKey = "ORDER-" + order.getId(); // đủ ổn cho demo
+                var txn = walletService.purchase(user.getId(), plan.getPriceCredits(), idemKey, "ORDER", order.getId());
+
+                // 3) Mark PAID + gán txn vào Order
+                orderService.markPaidWithTxn(order.getId(), txn.getId());
+
+                // 4) Issue License
+                var licenseKey = UUID.randomUUID().toString().replace("-", "").toUpperCase();
+                licenseService.issueLicense(order.getId(), licenseKey);
+
+                ra.addFlashAttribute("success", "Mua gói thành công! License key: " + licenseKey);
+            } catch (IllegalStateException e) {
+                ra.addFlashAttribute("error", "Số dư không đủ. Vui lòng nạp thêm credits trước khi mua.");
+            }
+
+            return (productId != null) ? ("redirect:/products/" + productId) : "redirect:/products";
+        }
+    }
 }

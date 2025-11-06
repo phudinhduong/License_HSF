@@ -30,6 +30,11 @@ public class OrderService {
                 .orElseThrow(() -> new IllegalArgumentException("User not found"));
         var plan = planRepo.findById(planId)
                 .orElseThrow(() -> new IllegalArgumentException("Plan not found"));
+        var order1 = orderRepo.findByUserIdAndPlanId(userId, planId);
+        System.out.println(order1);
+        if (!order1.isEmpty()) {
+            return null;
+        }
 
         var order = Order.builder()
                 .user(user)
