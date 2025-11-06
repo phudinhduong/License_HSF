@@ -4,19 +4,27 @@
     <meta charset="UTF-8">
     <title>Nạp tiền vào ví</title>
     <link rel="stylesheet" href="/css/bootstrap.min.css">
+
+    <link rel="stylesheet" th:href="@{/app.css}">
 </head>
-<body class="container mt-5">
+<body>
 
-<h2>Nạp tiền vào ví</h2>
+<header th:replace="~{fragments/layout :: topbar}"></header>
+<aside th:replace="~{fragments/layout :: sidebar}"></aside>
 
-<form th:action="@{/wallet/topup}" method="post">
-    <div class="mb-3">
-        <label for="amount" class="form-label">Số tiền (VNĐ)</label>
-        <input type="number" id="amount" name="amount" class="form-control" min="1000" required>
-        <input type="hidden" name="orderInfo" th:value="'Nap tien vao vi'">
-    </div>
-    <button type="submit" class="btn btn-primary">Nạp tiền</button>
-</form>
+<main class="main">
+    <h2>Nạp tiền vào ví</h2>
+
+    <form th:action="@{/wallet/topup}" method="post">
+        <div class="mb-3">
+            <label for="amount" class="form-label">Số tiền (VNĐ)</label>
+            <input type="number" id="amount" name="amount" class="form-control" min="1000" required>
+            <input type="hidden" name="orderInfo" th:value="'Nap tien vao vi'">
+        </div>
+        <button type="submit" class="btn btn-primary">Nạp tiền</button>
+    </form>
+</main>
+
 
 </body>
 </html>

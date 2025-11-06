@@ -54,23 +54,23 @@
             </li>
 
             <li class="single">
-                <a th:href="@{/plans}"
-                   th:classappend="${uri.startsWith('/plans')} ? ' active' : ''">
-                    Gói / Plans
+                <a th:href="@{/wallet/topup}"
+                   th:classappend="${uri.startsWith('/wallet/topup')} ? ' active' : ''">
+                    Nạp tiền
                 </a>
             </li>
 
             <li class="single">
-                <a th:href="@{/orders}"
-                   th:classappend="${uri.startsWith('/orders')} ? ' active' : ''">
-                    Đơn hàng
+                <a th:href="@{/my-wallet}"
+                   th:classappend="${uri.startsWith('/my-wallet')} ? ' active' : ''">
+                    Quản lý ví
                 </a>
             </li>
 
             <li class="single">
                 <a th:href="@{/templates/licenses}"
                    th:classappend="${uri.startsWith('/licenses')} ? ' active' : ''">
-                    License
+                    Quản lý Ví
                 </a>
             </li>
 

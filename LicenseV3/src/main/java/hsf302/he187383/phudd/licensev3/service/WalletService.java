@@ -66,12 +66,15 @@ public class WalletService {
         // 1) Ghi txn PENDING
         var txn = WalletTxn.builder()
                 .wallet(wallet)
-                .type(WalletTxnType.PURCHASE)
+ //               .type(WalletTxnType.PURCHASE)
+
                 .direction(WalletTxnDirection.OUT)
                 .amount(amount)
                 .balanceAfter(wallet.getBalance() - amount) // tạm tính
                 .status(WalletTxnStatus.valueOf("PENDING"))
-                .refType(Topup_Ref_Type.valueOf(refType))
+//                .refType(Topup_Ref_Type.valueOf(refType))
+                .refType(Ref_Type.valueOf(refType))
+
                 .refId(refId)
                 .idempotencyKey(idempotencyKey)
                 .build();
@@ -85,6 +88,8 @@ public class WalletService {
         txn.setBalanceAfter(wallet.getBalance());
         txn.setStatus(WalletTxnStatus.valueOf("COMPLETED"));
         return txnRepo.save(txn);
+    }
+
     public Page<Wallet> searchWallets(UUID userId, WalletStatus status, int page, int size) {
         Pageable pageable = PageRequest.of(page, size, Sort.by("updatedAt").descending());
         return walletRepo.searchWallets(userId, status, pageable);
