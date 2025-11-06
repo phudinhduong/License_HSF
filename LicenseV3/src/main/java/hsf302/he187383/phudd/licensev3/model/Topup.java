@@ -36,6 +36,9 @@ public class Topup extends BaseEntity {
     @Column(length = 128)
     private String paymentRef; // mã giao dịch VNPAY trả về
 
+    @Column(length = 64)
+    private String vnpTransactionNo = "";
+
     @Column(length = 128, unique = true)
     private String idempotencyKey; // khóa để tránh cộng trùng
 }

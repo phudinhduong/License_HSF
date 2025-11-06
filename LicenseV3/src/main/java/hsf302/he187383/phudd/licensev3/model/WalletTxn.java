@@ -23,10 +23,6 @@ public class WalletTxn extends BaseEntity {
     private Wallet wallet;
 
     @Enumerated(EnumType.STRING)
-    @Column(nullable = false, length = 16)
-    private WalletTxnType type; // TOPUP / PURCHASE / REFUND / WITHDRAW
-
-    @Enumerated(EnumType.STRING)
     @Column(nullable = false, length = 8)
     private WalletTxnDirection direction; // IN  / OUT
 
@@ -41,7 +37,7 @@ public class WalletTxn extends BaseEntity {
     private WalletTxnStatus status; // PENDING / COMPLETED / FAILED / REVERSED
 
     @Column(name = "ref_type", length = 64)
-    private Topup_Ref_Type refType; // Loại liên kết: "TOPUP", "ORDER", "REFUND"...
+    private Ref_Type refType; // Loại liên kết: "TOPUP", "ORDER", "REFUND"...
 
     @Column(name = "ref_id", columnDefinition = "uniqueidentifier")
     private UUID refId; // ID của bản ghi tham chiếu (VD: Topup ID, Order ID)

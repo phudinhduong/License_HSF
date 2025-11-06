@@ -5,10 +5,17 @@ import hsf302.he187383.phudd.licensev3.model.*;
 import hsf302.he187383.phudd.licensev3.repository.*;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 
 import java.math.BigDecimal;
-import java.util.Optional;
+import java.time.Instant;
+import java.time.LocalDateTime;
+import java.time.ZoneId;
+import java.util.List;
 import java.util.UUID;
 
 @Service
@@ -55,7 +62,7 @@ public class TopupService {
         if (topup.getStatus() != TopupStatus.PENDING) return; // tránh cộng trùng
 
         topup.setStatus(TopupStatus.SUCCESS);
-        topup.setPaymentRef(vnpTxnNo);
+        topup.setVnpTransactionNo(vnpTxnNo);
         topupRepository.save(topup);
 
         // Cập nhật ví
@@ -64,7 +71,7 @@ public class TopupService {
         Wallet wallet = walletService.getWalletByUserId(topup.getUser().getId());
 
         // Ghi nhận giao dịch ví
-        walletTxnService.createTopupTxn(wallet, WalletTxnType.TOPUP, WalletTxnDirection.IN, topup.getCreditsGranted(), Topup_Ref_Type.TOPUP, topup.getId(), "TOPUP_" + paymentRef);
+        walletTxnService.createTopupTxn(wallet, WalletTxnDirection.IN, topup.getCreditsGranted(), Ref_Type.TOPUP, topup.getId(), "TOPUP_" + paymentRef);
     }
 
     @Transactional
@@ -75,4 +82,48 @@ public class TopupService {
         });
     }
 
+    public Page<Topup> getUserTopups(User user, TopupStatus status,
+                                     LocalDateTime from, LocalDateTime to,
+                                     int page, int size) {
+        Pageable pageable = PageRequest.of(page, size);
+
+        Instant fromInstant = (from != null)
+                ? from.atZone(ZoneId.systemDefault()).toInstant()
+                : null;
+        Instant toInstant = (to != null)
+                ? to.atZone(ZoneId.systemDefault()).toInstant()
+                : null;
+
+        return topupRepository.findByUserAndFilter(user, status, fromInstant, toInstant, pageable);
+    }
+
+    public Page<Topup> getAllTopupsForAdmin(UUID userId, TopupStatus status,
+                                            LocalDateTime from, LocalDateTime to,
+                                            int page, int size) {
+        Pageable pageable = PageRequest.of(page, size);
+
+        Instant fromInstant = (from != null)
+                ? from.atZone(ZoneId.systemDefault()).toInstant()
+                : null;
+        Instant toInstant = (to != null)
+                ? to.atZone(ZoneId.systemDefault()).toInstant()
+                : null;
+
+        return topupRepository.findAllWithFilters(userId, status, fromInstant, toInstant, pageable);
+    }
+
+    @Scheduled(fixedRate = 60_000) // chạy mỗi phút
+    @Transactional
+    public void checkAndMarkExpiredTopups() {
+        Instant deadline = Instant.now().minusSeconds(600); // 10 phút
+        List<Topup> expired = topupRepository.findPendingTopupsBefore(deadline);
+
+        for (Topup topup : expired) {
+            topup.setStatus(TopupStatus.FAILED);
+        }
+
+        if (!expired.isEmpty()) {
+            topupRepository.saveAll(expired);
+        }
+    }
 }

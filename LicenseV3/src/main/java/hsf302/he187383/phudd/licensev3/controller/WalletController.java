@@ -1,14 +1,11 @@
 package hsf302.he187383.phudd.licensev3.controller;
 
+import hsf302.he187383.phudd.licensev3.config.SecurityConfig;
 import hsf302.he187383.phudd.licensev3.model.Topup;
-import hsf302.he187383.phudd.licensev3.repository.UserRepository;
 import hsf302.he187383.phudd.licensev3.service.TopupService;
 import hsf302.he187383.phudd.licensev3.service.VNPayService;
 import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
-import org.springframework.security.core.Authentication;
-import org.springframework.security.core.context.SecurityContextHolder;
-import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
@@ -24,7 +21,8 @@ public class WalletController {
 
     private final TopupService topupService;
     private final VNPayService vnPayService;
-    private final UserRepository userRepository;
+    private final SecurityConfig securityConfig;
+
 
     @GetMapping("/topup")
     public String showTopupPage() {
@@ -37,7 +35,7 @@ public class WalletController {
                               @RequestParam("amount") BigDecimal amount,
                               @RequestParam("orderInfo") String orderInfo) {
 
-        UUID userId = getCurrentUserId();
+        UUID userId = securityConfig.getCurrentUserId();
 
         Topup topup = topupService.createPendingTopup(userId, amount);
 
@@ -88,18 +86,4 @@ public class WalletController {
         return "wallet/topup-result";
     }
 
-
-    private UUID getCurrentUserId() {
-        Authentication auth = SecurityContextHolder.getContext().getAuthentication();
-        Object principal = auth.getPrincipal();
-
-        if (principal instanceof UserDetails userDetails) {
-            String email = userDetails.getUsername(); // email = username
-            var user = userRepository.findByEmail(email)
-                    .orElseThrow(() -> new IllegalStateException("User not found"));
-            return user.getId();
-        }
-
-        throw new IllegalStateException("No authenticated user found");
-    }
 }
