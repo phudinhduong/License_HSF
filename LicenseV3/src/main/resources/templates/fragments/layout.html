@@ -16,7 +16,6 @@
 
         <!-- Đã đăng nhập: hiện thẳng các link -->
         <div class="auth-inline" th:if="${currentUser != null}">
-            <span class="avatar" aria-hidden="true"></span>
             <span class="user-label" th:text="${currentUser.displayName}">Tài khoản</span>
             <span class="sep">•</span>
             <a th:href="@{/profile}">Thông tin người dùng</a>

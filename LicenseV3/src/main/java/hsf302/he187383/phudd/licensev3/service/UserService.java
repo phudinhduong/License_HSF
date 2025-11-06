@@ -1,9 +1,11 @@
 package hsf302.he187383.phudd.licensev3.service;
 
+import hsf302.he187383.phudd.licensev3.enums.*;
 import hsf302.he187383.phudd.licensev3.enums.UserStatus;
-import hsf302.he187383.phudd.licensev3.model.User;
-import hsf302.he187383.phudd.licensev3.repository.UserRepository;
+import hsf302.he187383.phudd.licensev3.model.*;
+import hsf302.he187383.phudd.licensev3.repository.*;
 import lombok.RequiredArgsConstructor;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -16,6 +18,31 @@ import java.util.UUID;
 public class UserService {
 
     private final UserRepository userRepo;
+    private final WalletRepository walletRepo;
+    private final PasswordEncoder passwordEncoder;
+
+    @Transactional
+    public User registerNewUser(String email, String rawPassword) {
+        if (userRepo.existsByEmailIgnoreCase(email)) {
+            throw new IllegalArgumentException("email_exists");
+        }
+        var u = User.builder()
+                .email(email.trim().toLowerCase())
+                .passwordHash(passwordEncoder.encode(rawPassword))
+                .role(UserRole.USER)
+                .status(UserStatus.ACTIVE)
+                .build();
+        u = userRepo.save(u);
+
+        walletRepo.save(Wallet.builder()
+                .user(u)
+                .balance(0L)
+                .status(WalletStatus.ACTIVE)
+                .build());
+
+        return u;
+    }
+
 
     @Transactional(readOnly = true)
     public List<User> findAll() {

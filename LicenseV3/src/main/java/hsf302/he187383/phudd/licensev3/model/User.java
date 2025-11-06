@@ -25,4 +25,18 @@ public class User extends BaseEntity {
     @Enumerated(EnumType.STRING)
     @Column(nullable = false, length = 16)
     private UserStatus status;
+
+
+
+    @Column(length = 200)
+    private String fullName;
+
+    @Column(length = 20)
+    private String phone;
+
+    @Column(length = 255)
+    private String address;
+
+    @Column(length = 255)
+    private String description;
 }
