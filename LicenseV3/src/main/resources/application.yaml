@@ -5,7 +5,7 @@ spring:
     password: sa
   jpa:
     hibernate:
-      ddl-auto: create
+      ddl-auto: none
     properties:
       hibernate.dialect: org.hibernate.dialect.SQLServerDialect
       hibernate.jdbc.time_zone: UTC
@@ -14,6 +14,15 @@ spring:
 
 server:
   port: 8081
+
+logging:
+  level:
+    root: INFO
+    org.springframework.web: DEBUG            # log request/response MVC
+    org.springframework.security: DEBUG       # log Spring Security decisions
+    org.hibernate.SQL: DEBUG                  # log SQL queries
+    org.hibernate.type.descriptor.sql.BasicBinder: TRACE  # log parameter values
+    com.yourpackage: DEBUG
 
 #logging:
 #  level:

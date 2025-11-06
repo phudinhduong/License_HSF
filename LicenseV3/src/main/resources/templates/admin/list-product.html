@@ -48,7 +48,7 @@
 <section class="container" style="margin-top: 90px;">
     <form th:action="@{/admin/product/save}" th:object="${product}" method="post">
 
-        <input type="hidden" th:if="${product?.id != null}" th:field="*{id}"/>
+        <input type="text" th:if="${product?.id != null}" th:field="*{id}"/>
 
         <div class="d-inline-flex">
             <div class="mb-3 me-5">
