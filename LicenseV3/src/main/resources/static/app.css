@@ -285,3 +285,184 @@ body.login-page {
 }
 
 
+/* ===== Table base ===== */
+.table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 14px;
+    background: #fff;
+}
+
+.table th,
+.table td {
+    padding: 10px 12px;
+    border-bottom: 1px solid #e9edf3;
+    vertical-align: middle;
+}
+
+.table thead th {
+    font-weight: 600;
+    text-align: left;
+    background: #f6f8fb;
+    color: #0f1a2a;
+    white-space: nowrap;
+}
+
+.table tbody tr:nth-child(even) { background: #fafcff; }
+.table tbody tr:hover { background: #f1f6ff; }
+
+/* chữ phụ trong ô (mã plan…) */
+.table .muted { color: #6b7280; font-size: 12px; }
+
+/* Căn giữa cho các cột số & trạng thái (theo thứ tự cột hiện tại) */
+.table tbody td:nth-child(3),
+.table tbody td:nth-child(4),
+.table tbody td:nth-child(6),
+.table tbody td:nth-child(9) {
+    text-align: center;
+}
+
+/* Cột hành động hẹp lại, các nút đặt cạnh nhau */
+.table td:last-child {
+    white-space: nowrap;
+    gap: 6px;
+}
+.table td .btn { margin-right: 6px; }
+
+/* Responsive: cho phép kéo ngang nếu cột nhiều */
+@media (max-width: 992px) {
+    .table { display: block; overflow-x: auto; }
+    .table thead, .table tbody, .table tr, .table th, .table td { white-space: nowrap; }
+}
+
+/*!* Dark-mode (nếu site dùng nền tối) – tùy chọn *!*/
+/*@media (prefers-color-scheme: dark) {*/
+/*    .table { background: #0f1520; }*/
+/*    .table thead th { background: #121a27; color: #dde7ff; border-bottom-color: #1f2a3a; }*/
+/*    .table th, .table td { border-bottom-color: #1f2a3a; color: #e5ecff; }*/
+/*    .table tbody tr:nth-child(even) { background: #0e1420; }*/
+/*    .table tbody tr:hover { background: #142039; }*/
+/*    .table .muted { color: #9aa6c1; }*/
+/*}*/
+
+
+/* ===== Form layout ===== */
+.form {
+    max-width: 560px;
+}
+.form .row {
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+    margin: 12px 0;
+}
+.form label {
+    font-size: 14px;
+    color: #374151;
+    font-weight: 600;
+}
+
+/* Inputs */
+.form input[type="text"],
+.form input[type="password"] {
+    width: 100%;
+    padding: 10px 12px;
+    border: 1px solid #d1d5db;
+    border-radius: 10px;
+    background: #fff;
+    color: #111827;
+    transition: border-color .15s, box-shadow .15s;
+}
+.form input::placeholder { color: #9ca3af; }
+.form input:focus {
+    outline: none;
+    border-color: #2563eb;
+    box-shadow: 0 0 0 3px rgba(37, 99, 235, .15);
+}
+
+/* Buttons */
+.btn {
+    display: inline-block;
+    padding: 10px 14px;
+    border-radius: 10px;
+    border: 1px solid #d1d5db;
+    background: #f3f4f6;
+    color: #111827;
+    cursor: pointer;
+    text-decoration: none;
+}
+.btn.primary {
+    background: #2563eb;
+    border-color: #1d4ed8;
+    color: #fff;
+}
+.btn:hover { filter: brightness(0.98); }
+.btn.primary:hover { filter: brightness(1.05); }
+
+/* ===== Password eye button (theo ID sẵn có) ===== */
+#passwordInput {
+    padding-right: 40px; /* chừa chỗ cho nút 👁 */
+}
+#togglePassword {
+    position: absolute;
+    right: 8px;
+    top: 50%;
+    transform: translateY(-10%); /* khớp với layout của bé (label + input) */
+    padding: 6px;
+    line-height: 1;
+    background: transparent;
+    border: none;
+    color: #6b7280;
+    border-radius: 8px;
+}
+#togglePassword:hover { color: #374151; }
+#togglePassword:focus-visible {
+    outline: 2px solid #2563eb;
+    outline-offset: 2px;
+}
+
+/* Row buttons */
+.form .row:last-child {
+    display: flex;
+    gap: 8px;
+    align-items: center;
+}
+
+.form textarea {
+    width: 100%;
+    min-height: 120px;
+    padding: 10px 12px;
+    border: 1px solid #d1d5db;
+    border-radius: 10px;
+    background: #fff;
+    color: #111827;
+    resize: vertical;
+    transition: border-color .15s, box-shadow .15s;
+}
+.form textarea::placeholder { color: #9ca3af; }
+.form textarea:focus {
+    outline: none;
+    border-color: #2563eb;
+    box-shadow: 0 0 0 3px rgba(37,99,235,.15);
+}
+
+/* Optional: dark mode */
+/*@media (prefers-color-scheme: dark) {*/
+/*    .form label { color: #cbd5e1; }*/
+/*    .form input[type="text"],*/
+/*    .form input[type="password"] {*/
+/*        background: #0b1220;*/
+/*        color: #e5e7eb;*/
+/*        border-color: #334155;*/
+/*    }*/
+/*    .form input:focus {*/
+/*        border-color: #60a5fa;*/
+/*        box-shadow: 0 0 0 3px rgba(96,165,250,.2);*/
+/*    }*/
+/*    .btn { background: #1f2937; border-color: #334155; color: #e5e7eb; }*/
+/*    .btn.primary { background: #3b82f6; border-color: #2563eb; }*/
+/*    #togglePassword { color: #94a3b8; }*/
+/*    #togglePassword:hover { color: #e2e8f0; }*/
+/*}*/
+
+

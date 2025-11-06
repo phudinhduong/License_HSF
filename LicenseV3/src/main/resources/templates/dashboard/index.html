@@ -38,28 +38,46 @@
                 <th style="width:180px">Hành động</th>
             </tr>
             </thead>
-            <tbody>
+            <tbody th:with="tz=${T(java.time.ZoneId).of('Asia/Bangkok')}">
             <tr th:if="${#lists.isEmpty(licenses)}">
-                <td colspan="7" class="muted">Bạn chưa mua gói nào.</td>
+                <td colspan="9" class="muted">Bạn chưa mua gói nào.</td>
             </tr>
 
             <tr th:each="lic : ${licenses}">
                 <td th:text="${lic.plan.product.name}">Product</td>
+
                 <td>
                     <div th:text="${lic.plan.name}">Plan Name</div>
                     <div class="muted" th:text="'Mã: ' + ${lic.plan.code}">Code</div>
                 </td>
 
-                <td th:text="${lic.plan.concurrentLimitPerAccount}"></td>
-                <td th:text="${lic.plan.deviceLimitPerAccount}"></td>
-
+                <!-- concurrent & device limit: nếu null thì '—' -->
+                <td th:text="${lic.plan.concurrentLimitPerAccount != null ? lic.plan.concurrentLimitPerAccount : '—'}">—</td>
+                <td th:text="${lic.plan.deviceLimitPerAccount != null ? lic.plan.deviceLimitPerAccount : '—'}">—</td>
 
                 <td th:text="${lic.plan.billingType}">SUBSCRIPTION</td>
                 <td th:text="${lic.status}">ACTIVE</td>
-                <td th:text="${lic.issuedAt}">2025-11-05T00:00:00Z</td>
-                <td th:text="${lic.expiresAt != null ? lic.expiresAt : '—'}">—</td>
+
+                <!-- Issued -->
                 <td>
-<!--                    <a class="btn" th:href="@{|/licenses/${lic.id}|}">Xem chi tiết</a>-->
+                    <time th:title="${lic.issuedAt}"
+                          th:text="${#temporals.format(lic.issuedAt.atZone(tz), 'dd/MM/yyyy HH:mm')}">
+                        06/11/2025 22:53
+                    </time>
+                </td>
+
+                <!-- Expires -->
+                <td>
+                    <time th:if="${lic.expiresAt != null}"
+                          th:title="${lic.expiresAt}"
+                          th:text="${#temporals.format(lic.expiresAt.atZone(tz), 'dd/MM/yyyy HH:mm')}">
+                        06/11/2026 22:53
+                    </time>
+                    <span th:if="${lic.expiresAt == null}">—</span>
+                </td>
+
+                <td>
+                    <!-- <a class="btn" th:href="@{|/licenses/${lic.id}|}">Xem chi tiết</a> -->
                     <a class="btn primary" th:href="@{|/licenses/${lic.id}/accounts|}">Sử dụng</a>
                 </td>
             </tr>
