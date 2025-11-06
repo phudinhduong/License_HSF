@@ -49,6 +49,7 @@ public class ProductService {
     }
 
     public void delete(UUID id) {
+        System.out.println("aaaaaaa và");
         planRepository.deletePlanByProduct_Id(id);
         productRepo.deleteById(id);
     }

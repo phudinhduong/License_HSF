@@ -33,6 +33,14 @@ app:
     concurrentWindowSeconds: 600       # 10 phút (đếm concurrent/device)
             # 10 phút (đếm concurrent/device)
 
+logging:
+  level:
+    root: INFO
+    org.springframework.web: DEBUG            # log request/response MVC
+    org.springframework.security: DEBUG       # log Spring Security decisions
+    org.hibernate.SQL: DEBUG                  # log SQL queries
+    org.hibernate.type.descriptor.sql.BasicBinder: TRACE  # log parameter values
+    com.yourpackage: DEBUG
 
 #logging:
 #  level:
