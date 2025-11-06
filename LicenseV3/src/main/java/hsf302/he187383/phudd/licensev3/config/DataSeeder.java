@@ -11,7 +11,6 @@ import org.springframework.context.annotation.Configuration;
 import org.springframework.security.crypto.password.PasswordEncoder;
 
 import java.util.*;
-import java.util.UUID;
 
 @Configuration
 @RequiredArgsConstructor
@@ -79,12 +78,11 @@ public class DataSeeder implements CommandLineRunner {
             // Ghi sổ giao dịch (ADJUSTMENT)
             var txn = WalletTxn.builder()
                     .wallet(w)
-                    .type(WalletTxnType.ADJUSTMENT)
                     .direction(delta >= 0 ? WalletTxnDirection.IN : WalletTxnDirection.OUT)
                     .amount(Math.abs(delta))
                     .balanceAfter(w.getBalance())
                     .status(WalletTxnStatus.COMPLETED)
-                    .refType(Topup_Ref_Type.TOPUP)
+                    .refType(Ref_Type.TOPUP)
                     .refId(null)
                     .idempotencyKey("TOPUP-" + u.getEmail())
                     .build();

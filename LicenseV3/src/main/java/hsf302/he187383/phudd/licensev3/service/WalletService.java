@@ -5,6 +5,10 @@ import hsf302.he187383.phudd.licensev3.enums.*;
 import hsf302.he187383.phudd.licensev3.model.*;
 import hsf302.he187383.phudd.licensev3.repository.*;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -40,6 +44,10 @@ public class WalletService {
                 .orElseThrow(() -> new RuntimeException("Wallet not found"));
     }
 
+    public Page<Wallet> searchWallets(UUID userId, WalletStatus status, int page, int size) {
+        Pageable pageable = PageRequest.of(page, size, Sort.by("updatedAt").descending());
+        return walletRepo.searchWallets(userId, status, pageable);
+    }
 }
 
 

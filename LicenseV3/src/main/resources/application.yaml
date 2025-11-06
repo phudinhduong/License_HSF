@@ -7,7 +7,7 @@ spring:
 
   jpa:
     hibernate:
-      ddl-auto: update      # nên dùng update để giữ dữ liệu
+      ddl-auto: update     # nên dùng update để giữ dữ liệu
     properties:
       hibernate:
         dialect: org.hibernate.dialect.SQLServerDialect
