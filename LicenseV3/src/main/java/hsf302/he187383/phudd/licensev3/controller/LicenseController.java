@@ -41,23 +41,39 @@ public class LicenseController {
     @GetMapping("/{licenseId}/accounts")
     public String accounts(@PathVariable UUID licenseId,
                            Authentication auth,
-                           Model model,
-                           HttpServletResponse resp) {
-        var user = requireUser(auth);
-        var opt = licenseRepo.findByIdAndUserId(licenseId, user.getId());
+                           @RequestParam(defaultValue = "0") int page,
+                           @RequestParam(defaultValue = "10") int size,
+                           Model model, HttpServletResponse resp,
+                           RedirectAttributes ra) {
 
+        var user = requireUser(auth);
+
+
+        var opt = licenseRepo.findByIdAndUserId(licenseId, user.getId());
         if (opt.isEmpty()) {
-            // tuỳ chọn: resp.setStatus(404);
-            model.addAttribute("error", "License không tồn tại hoặc không thuộc về bạn.");
-            model.addAttribute("accounts", List.of()); // tránh NullPointer trong view
-            return "licenses/accounts";                // view tự hiển thị alert error
+            ra.addFlashAttribute("error", "License không tồn tại hoặc không thuộc về bạn.");
+            return "redirect:/";
         }
 
         var license = opt.get();
+        var p = accountService.findByLicensePaged(licenseId, page, size);
+
         model.addAttribute("license", license);
-        model.addAttribute("accounts", accountService.findByLicense(licenseId));
+        model.addAttribute("accounts", p.getContent());
+        model.addAttribute("page", p);
+        model.addAttribute("size", p.getSize());
+        model.addAttribute("currentPage", p.getNumber());
+        model.addAttribute("totalPages", p.getTotalPages());
+        model.addAttribute("totalElements", p.getTotalElements());
+
+        int start = p.getTotalElements() == 0 ? 0 : (p.getNumber() * p.getSize() + 1);
+        int end   = start == 0 ? 0 : (start + p.getNumberOfElements() - 1);
+        model.addAttribute("rangeStart", start);
+        model.addAttribute("rangeEnd", end);
+
         return "licenses/accounts";
     }
+
 
 
     // ===== Form tạo mới
@@ -170,7 +186,6 @@ public class LicenseController {
         var hash = passwordEncoder.encode(np);
         accountService.updatePassword(accountId, hash);
 
-        // (Nếu bé đang lưu thêm initialPasswordEnc để hiển thị, nhớ cập nhật luôn)
         // account.setInitialPasswordEnc(crypto.encrypt(np));
         // accountRepo.save(account);
 

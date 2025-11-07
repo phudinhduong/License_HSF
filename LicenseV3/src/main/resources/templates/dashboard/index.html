@@ -18,9 +18,12 @@
 
 
 <!-- Main content -->
+
 <main class="main">
     <div class="card">
         <h2>Kế hoạch đã mua (Licenses của tôi)</h2>
+
+        <div class="alert error" th:if="${error}" th:text="${error}"></div>
 
         <table class="table">
             <thead>
@@ -30,6 +33,8 @@
 
                 <th>concurrent Limit Per Account</th>
                 <th>device Limit Per Account</th>
+
+                <th>License Key</th>
 
                 <th>Billing</th>
                 <th>Trạng thái</th>
@@ -52,8 +57,10 @@
                 </td>
 
                 <!-- concurrent & device limit: nếu null thì '—' -->
-                <td th:text="${lic.plan.concurrentLimitPerAccount != null ? lic.plan.concurrentLimitPerAccount : '—'}">—</td>
-                <td th:text="${lic.plan.deviceLimitPerAccount != null ? lic.plan.deviceLimitPerAccount : '—'}">—</td>
+                <td th:text="${lic.plan.concurrentLimitPerAccount != null ? lic.plan.concurrentLimitPerAccount : 'Unlimit'}">—</td>
+                <td th:text="${lic.plan.deviceLimitPerAccount != null ? lic.plan.deviceLimitPerAccount : 'Unlimit'}">—</td>
+
+                <td th:text="${lic.licenseKey != null ? lic.licenseKey : 'No Key'}">—</td>
 
                 <td th:text="${lic.plan.billingType}">SUBSCRIPTION</td>
                 <td th:text="${lic.status}">ACTIVE</td>
@@ -83,6 +90,50 @@
             </tr>
             </tbody>
         </table>
+        <!-- Pagination -->
+        <div class="pager-wrap" th:if="${totalPages > 0}">
+            <div class="pager-info muted">
+                Hiển thị [[${rangeStart}]]–[[${rangeEnd}]] / [[${totalElements}]]
+            </div>
+
+            <div class="pager">
+                <!-- First -->
+                <a class="pg" th:classappend="${currentPage == 0} ? ' disabled'"
+                   th:href="@{|/dashboard?page=0&size=${size}|}">&laquo; Đầu</a>
+
+                <!-- Prev -->
+                <a class="pg" th:classappend="${currentPage == 0} ? ' disabled'"
+                   th:href="@{|/dashboard?page=${currentPage - 1}&size=${size}|}">Trước</a>
+
+                <!-- Page numbers (giản lược: toàn bộ 0..totalPages-1) -->
+                <a class="pg"
+                   th:each="i : ${#numbers.sequence(0, totalPages - 1)}"
+                   th:href="@{|/dashboard?page=${i}&size=${size}|}"
+                   th:text="${i + 1}"
+                   th:classappend="${i == currentPage} ? ' active'">1</a>
+
+                <!-- Next -->
+                <a class="pg" th:classappend="${currentPage + 1 >= totalPages} ? ' disabled'"
+                   th:href="@{|/dashboard?page=${currentPage + 1}&size=${size}|}">Sau</a>
+
+                <!-- Last -->
+                <a class="pg" th:classappend="${currentPage + 1 >= totalPages} ? ' disabled'"
+                   th:href="@{|/dashboard?page=${totalPages - 1}&size=${size}|}">Cuối &raquo;</a>
+
+                <!-- (Tuỳ chọn) chọn size -->
+                <form method="get" style="margin-left:12px;">
+                    <input type="hidden" name="page" th:value="${currentPage}">
+                    <select name="size" onchange="this.form.submit()">
+                        <option th:value="5"  th:selected="${size == 5}">5</option>
+                        <option th:value="10" th:selected="${size == 10}">10</option>
+                        <option th:value="20" th:selected="${size == 20}">20</option>
+                        <option th:value="50" th:selected="${size == 50}">50</option>
+                    </select>
+                </form>
+            </div>
+        </div>
+
+
     </div>
 </main>
 

@@ -8,6 +8,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import java.util.*;
 
@@ -21,22 +22,59 @@ public class ProductController {
     private final PlanService planService;
 
     @GetMapping
-    public String list(Model model) {
-        model.addAttribute("products", productService.findAll());
+    public String list(@RequestParam(value = "q", required = false) String q,
+                       @RequestParam(defaultValue = "0") int page,
+                       @RequestParam(defaultValue = "10") int size,
+                       Model model) {
+
+        var p = productService.findPage(q, page, size);
+
+        model.addAttribute("products", p.getContent());
+        model.addAttribute("page", p);
+        model.addAttribute("size", p.getSize());
+        model.addAttribute("currentPage", p.getNumber());
+        model.addAttribute("totalPages", p.getTotalPages());
+        model.addAttribute("totalElements", p.getTotalElements());
+        model.addAttribute("q", q);
+
+        int start = p.getNumber() * p.getSize() + (p.getTotalElements() == 0 ? 0 : 1);
+        int end   = start + p.getNumberOfElements() - (p.getNumberOfElements() == 0 ? 0 : 1);
+        model.addAttribute("rangeStart", start);
+        model.addAttribute("rangeEnd", end);
+
         return "products/list";
     }
 
     @GetMapping("/{id}")
-    public String detail(@PathVariable UUID id, Model model) {
-        var product = productService.findById(id); // ném IllegalArgumentException nếu không thấy
-        model.addAttribute("product", product);
+    public String detail(@PathVariable UUID id,
+                         @RequestParam(defaultValue = "0") int page,
+                         @RequestParam(defaultValue = "10") int size,
+                         Model model, RedirectAttributes ra
+    ) {
 
-        List<Plan> plans = planService.findByProduct(id);
-        for (Plan plan : plans) {
-            System.out.println(plan.toString());
+        var product = productService.findById(id); // ném IllegalArgumentException nếu không thấy
+
+        if (product == null) {
+            ra.addFlashAttribute("message", "Product not found");
+            return "redirect:/products";
         }
 
-        model.addAttribute("plans", planService.findByProduct(id));
+        model.addAttribute("product", product);
+
+        var p = planService.findByProductPaged(id, page, size);
+
+        model.addAttribute("plans", p.getContent());
+        model.addAttribute("page", p);
+        model.addAttribute("size", p.getSize());
+        model.addAttribute("currentPage", p.getNumber());
+        model.addAttribute("totalPages", p.getTotalPages());
+        model.addAttribute("totalElements", p.getTotalElements());
+
+        int start = p.getTotalElements() == 0 ? 0 : (p.getNumber() * p.getSize() + 1);
+        int end   = start == 0 ? 0 : (start + p.getNumberOfElements() - 1);
+        model.addAttribute("rangeStart", start);
+        model.addAttribute("rangeEnd", end);
+
         return "products/detail";
     }
 

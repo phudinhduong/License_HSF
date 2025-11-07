@@ -1,6 +1,7 @@
 package hsf302.he187383.phudd.licensev3.repository;
 
 import hsf302.he187383.phudd.licensev3.model.*;
+import org.springframework.data.domain.Page;
 import org.springframework.data.jpa.repository.EntityGraph;
 import org.springframework.data.jpa.repository.JpaRepository;
 
@@ -14,7 +15,7 @@ public interface LicenseRepository extends JpaRepository<License, UUID> {
 
 
     @EntityGraph(attributePaths = {"plan", "plan.product"})
-    List<License> findByUserIdOrderByCreatedAtDesc(UUID userId);
+    Page<License> findByUserId(UUID userId, org.springframework.data.domain.Pageable pageable);
 
     @EntityGraph(attributePaths = {"plan", "plan.product"})
     Optional<License> findByIdAndUserId(UUID id, UUID userId);

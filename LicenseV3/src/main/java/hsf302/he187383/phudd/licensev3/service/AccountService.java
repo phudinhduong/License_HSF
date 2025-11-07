@@ -4,6 +4,9 @@ import hsf302.he187383.phudd.licensev3.enums.*;
 import hsf302.he187383.phudd.licensev3.model.*;
 import hsf302.he187383.phudd.licensev3.repository.*;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -18,6 +21,14 @@ public class AccountService {
 
     private final AccountRepository accountRepo;
     private final LicenseRepository licenseRepo;
+
+    @Transactional(readOnly = true)
+    public Page<Account> findByLicensePaged(UUID licenseId, int page, int size) {
+        size = Math.max(1, Math.min(size, 50));
+        page = Math.max(0, page);
+        var pageable = PageRequest.of(page, size, Sort.by(Sort.Direction.DESC, "createdAt"));
+        return accountRepo.findByLicenseId(licenseId, pageable);
+    }
 
     @Transactional(readOnly = true)
     public List<Account> findByLicense(UUID licenseId) {
