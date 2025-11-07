@@ -41,7 +41,18 @@ public class WalletService {
 
     public Wallet getWalletByUserId(UUID userId) {
         return walletRepo.findByUserId(userId)
-                .orElseThrow(() -> new RuntimeException("Wallet not found"));
+                .orElseGet(() -> {
+                    User user = userRepository.findById(userId)
+                            .orElseThrow(() -> new RuntimeException("User not found"));
+
+                    Wallet newWallet = Wallet.builder()
+                            .user(user)
+                            .balance(0L)
+                            .status(WalletStatus.ACTIVE)
+                            .build();
+
+                    return walletRepo.save(newWallet);
+                });
     }
 
     /** Mua hàng: tạo WalletTxn PURCHASE/OUT + trừ ví, idempotent theo idempotencyKey */
