@@ -465,4 +465,29 @@ body.login-page {
 /*    #togglePassword:hover { color: #e2e8f0; }*/
 /*}*/
 
+.pager-wrap {
+    display: flex; align-items: center; justify-content: space-between;
+    margin-top: 12px;
+}
+.pager-info { font-size: 13px; }
+.pager { display: flex; align-items: center; gap: 6px; flex-wrap: wrap; }
+
+.pager .pg {
+    display: inline-block;
+    padding: 6px 10px;
+    border: 1px solid #d1d5db;
+    border-radius: 8px;
+    background: #fff;
+    color: #111827;
+    text-decoration: none;
+    font-size: 13px;
+}
+.pager .pg:hover { background: #f3f4f6; }
+.pager .pg.active {
+    background: #2563eb; border-color: #1d4ed8; color: #fff; font-weight: 600;
+}
+.pager .pg.disabled {
+    pointer-events: none; opacity: .5;
+}
+
 

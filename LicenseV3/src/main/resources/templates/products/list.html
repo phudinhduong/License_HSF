@@ -37,6 +37,43 @@
             </tr>
             </tbody>
         </table>
+        <!-- Pagination -->
+        <div class="pager-wrap" th:if="${totalPages > 0}">
+            <div class="pager-info muted">
+                Hiển thị [[${rangeStart}]]–[[${rangeEnd}]] / [[${totalElements}]]
+            </div>
+
+            <div class="pager">
+                <a class="pg" th:classappend="${currentPage == 0} ? ' disabled'"
+                   th:href="@{|/products?page=0&size=${size}&q=${q}|}">&laquo; Đầu</a>
+
+                <a class="pg" th:classappend="${currentPage == 0} ? ' disabled'"
+                   th:href="@{|/products?page=${currentPage - 1}&size=${size}&q=${q}|}">Trước</a>
+
+                <a class="pg"
+                   th:each="i : ${#numbers.sequence(0, totalPages - 1)}"
+                   th:href="@{|/products?page=${i}&size=${size}&q=${q}|}"
+                   th:text="${i + 1}"
+                   th:classappend="${i == currentPage} ? ' active'">1</a>
+
+                <a class="pg" th:classappend="${currentPage + 1 >= totalPages} ? ' disabled'"
+                   th:href="@{|/products?page=${currentPage + 1}&size=${size}&q=${q}|}">Sau</a>
+
+                <a class="pg" th:classappend="${currentPage + 1 >= totalPages} ? ' disabled'"
+                   th:href="@{|/products?page=${totalPages - 1}&size=${size}&q=${q}|}">Cuối &raquo;</a>
+
+                <form method="get" style="margin-left:12px;">
+                    <input type="hidden" name="q" th:value="${q}">
+                    <input type="hidden" name="page" th:value="${currentPage}">
+                    <select name="size" onchange="this.form.submit()">
+                        <option th:value="5"  th:selected="${size == 5}">5</option>
+                        <option th:value="10" th:selected="${size == 10}">10</option>
+                        <option th:value="20" th:selected="${size == 20}">20</option>
+                        <option th:value="50" th:selected="${size == 50}">50</option>
+                    </select>
+                </form>
+            </div>
+        </div>
     </div>
 </main>
 

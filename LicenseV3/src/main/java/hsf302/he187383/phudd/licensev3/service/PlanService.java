@@ -4,8 +4,12 @@ package hsf302.he187383.phudd.licensev3.service;
 import hsf302.he187383.phudd.licensev3.model.Plan;
 import hsf302.he187383.phudd.licensev3.repository.*;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+
 
 import java.util.List;
 import java.util.UUID;
@@ -20,14 +24,29 @@ public class PlanService {
     private final ProductRepository productRepo;
 
     @Transactional(readOnly = true)
+    public Page<Plan> findByProductPaged(UUID productId, int page, int size) {
+        size = Math.max(1, Math.min(size, 50));
+        page = Math.max(0, page);
+        var pageable = PageRequest.of(page, size, Sort.by(Sort.Direction.ASC, "priceCredits"));
+        return planRepo.findByProductId(productId, pageable);
+    }
+
+    // (nếu cần) bản list cũ:
+    @Transactional(readOnly = true)
+    public List<Plan> findByProduct(UUID productId) {
+        return planRepo.findByProductId(productId, PageRequest.of(0, Integer.MAX_VALUE)).getContent();
+    }
+
+
+    @Transactional(readOnly = true)
     public List<Plan> findAll() {
         return planRepo.findAll();
     }
 
-    @Transactional(readOnly = true)
-    public List<Plan> findByProduct(UUID productId) {
-        return planRepo.findByProductIdOrderByCreatedAtDesc(productId);
-    }
+//    @Transactional(readOnly = true)
+//    public List<Plan> findByProduct(UUID productId) {
+//        return planRepo.findByProductIdOrderByCreatedAtDesc(productId);
+//    }
 
     @Transactional(readOnly = true)
     public Plan findById(UUID id) {
