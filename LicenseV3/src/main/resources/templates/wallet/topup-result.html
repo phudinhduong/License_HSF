@@ -3,41 +3,58 @@
 <head>
     <meta charset="UTF-8">
     <title>Kết quả nạp tiền</title>
-    <link rel="stylesheet" href="/css/bootstrap.min.css">
+    <!-- Bootstrap 5 CDN -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" th:href="@{/app.css}">
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
 </head>
-<body class="container mt-5">
+<body class="bg-light">
+<!-- Top Navbar -->
+<header th:replace="~{fragments/layout :: topbar}"></header>
 
-<h2>Kết quả nạp tiền</h2>
+<!-- Sidebar -->
+<aside th:replace="~{fragments/layout :: sidebar}"></aside>
 
-<!-- Trạng thái giao dịch -->
-<div th:switch="${status}">
-    <div th:case="'success'" class="alert alert-success">
-        <h4>✔ Thành công!</h4>
-        <p th:text="${message}"></p>
-    </div>
-    <div th:case="'failed'" class="alert alert-danger">
-        <h4>✖ Thất bại</h4>
-        <p th:text="${message}"></p>
-    </div>
-    <div th:case="'error'" class="alert alert-warning">
-        <h4>⚠ Lỗi</h4>
-        <p th:text="${message}"></p>
-    </div>
-</div>
+<!-- Main Content -->
+<main class="container d-flex justify-content-center align-items-center min-vh-100">
+    <div class="col-lg-6 col-md-8 col-sm-12">
+        <div class="card shadow p-4">
+            <h2 class="text-center mb-4">Kết quả nạp tiền</h2>
 
-<!-- Thông tin chi tiết giao dịch -->
-<div class="card mt-4">
-    <div class="card-header">Thông tin giao dịch</div>
-    <div class="card-body">
-        <p><strong>Mã tham chiếu (TxnRef):</strong> <span th:text="${txnRef}"></span></p>
-        <p><strong>Mã giao dịch VNPay:</strong> <span th:text="${transactionNo}"></span></p>
-        <p><strong>Số tiền:</strong> <span th:text="${amount} + ' VNĐ'"></span></p>
-        <p><strong>Ngày thanh toán:</strong> <span th:text="${payDate}"></span></p>
-        <p><strong>Loại giao dịch:</strong> <span th:text="${orderInfo}"></span></p>
-    </div>
-</div>
+            <!-- Trạng thái giao dịch -->
+            <div th:switch="${status}">
+                <div th:case="'success'" class="alert alert-success">
+                    <h5 class="mb-1">Thành công!</h5>
+                    <p th:text="${message}"></p>
+                </div>
+                <div th:case="'failed'" class="alert alert-danger">
+                    <h5 class="mb-1">Thất bại</h5>
+                    <p th:text="${message}"></p>
+                </div>
+                <div th:case="'error'" class="alert alert-warning">
+                    <h5 class="mb-1">Lỗi</h5>
+                    <p th:text="${message}"></p>
+                </div>
+            </div>
 
-<a href="/" class="btn btn-primary mt-4">Quay về trang chủ</a>
+            <!-- Thông tin chi tiết giao dịch -->
+            <div class="card mt-3">
+                <div class="card-header bg-secondary text-white">Thông tin giao dịch</div>
+                <div class="card-body">
+                    <p><strong>Mã tham chiếu (TxnRef):</strong> <span th:text="${txnRef}"></span></p>
+                    <p><strong>Mã giao dịch VNPay:</strong> <span th:text="${transactionNo}"></span></p>
+                    <p><strong>Số tiền:</strong> <span th:text="${amount} + ' VNĐ'"></span></p>
+                    <p><strong>Ngày thanh toán:</strong> <span th:text="${payDate}"></span></p>
+                    <p><strong>Loại giao dịch:</strong> <span th:text="${orderInfo}"></span></p>
+                </div>
+            </div>
+
+            <div class="text-center mt-4">
+                <a href="/" class="btn btn-primary">Quay về trang chủ</a>
+            </div>
+        </div>
+    </div>
+</main>
 
 </body>
 </html>
