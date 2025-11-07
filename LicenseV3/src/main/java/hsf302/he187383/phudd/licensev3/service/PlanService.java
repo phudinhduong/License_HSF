@@ -1,6 +1,7 @@
 package hsf302.he187383.phudd.licensev3.service;
 
 
+import hsf302.he187383.phudd.licensev3.enums.BillingType;
 import hsf302.he187383.phudd.licensev3.model.Plan;
 import hsf302.he187383.phudd.licensev3.repository.*;
 import lombok.RequiredArgsConstructor;
@@ -39,6 +40,7 @@ public class PlanService {
         // đảm bảo product hợp lệ
         var product = productRepo.findById(p.getProduct().getId())
                 .orElseThrow(() -> new IllegalArgumentException("Product not found"));
+        p.setBillingType(BillingType.SUBSCRIPTION);
         p.setProduct(product);
         return planRepo.save(p);
     }
@@ -47,7 +49,7 @@ public class PlanService {
         var existing = findById(id);
         existing.setCode(p.getCode());
         existing.setName(p.getName());
-        existing.setBillingType(p.getBillingType());
+        existing.setBillingType(BillingType.SUBSCRIPTION);
         existing.setPriceCredits(p.getPriceCredits());
         existing.setCurrency(p.getCurrency());
         existing.setDurationDays(p.getDurationDays());
