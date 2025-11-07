@@ -4,6 +4,9 @@ import hsf302.he187383.phudd.licensev3.enums.*;
 import hsf302.he187383.phudd.licensev3.model.*;
 import hsf302.he187383.phudd.licensev3.repository.*;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -64,6 +67,15 @@ public class OrderService {
         order.setStatus(OrderStatus.PAID);
         order.setWalletTxn(txnRef);
         return orderRepo.save(order);
+    }
+
+
+    @Transactional(readOnly = true)
+    public Page<Order> findMyOrders(UUID userId, int page, int size) {
+        size = Math.max(1, Math.min(size, 50));
+        page = Math.max(0, page);
+        var pageable = PageRequest.of(page, size, Sort.by(Sort.Direction.DESC, "createdAt"));
+        return orderRepo.findByUserId(userId, pageable);
     }
 }
 

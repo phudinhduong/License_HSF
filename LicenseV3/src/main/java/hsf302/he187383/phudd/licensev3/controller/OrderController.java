@@ -67,4 +67,36 @@ public class OrderController {
             return (productId != null) ? ("redirect:/products/" + productId) : "redirect:/products";
         }
     }
+
+
+    @GetMapping("/my")
+    public String myOrders(@RequestParam(defaultValue = "0") int page,
+                           @RequestParam(defaultValue = "10") int size,
+                           Model model) {
+
+        var auth = SecurityContextHolder.getContext().getAuthentication();
+        if (auth == null || !auth.isAuthenticated() || auth instanceof AnonymousAuthenticationToken) {
+            return "redirect:/login";
+        }
+
+        var user = userRepo.findByEmail(auth.getName())
+                .orElseThrow(() -> new IllegalArgumentException("User not found"));
+
+        var p = orderService.findMyOrders(user.getId(), page, size);
+
+        model.addAttribute("orders", p.getContent());
+        model.addAttribute("page", p);
+        model.addAttribute("size", p.getSize());
+        model.addAttribute("currentPage", p.getNumber());
+        model.addAttribute("totalPages", p.getTotalPages());
+        model.addAttribute("totalElements", p.getTotalElements());
+
+        int start = p.getTotalElements() == 0 ? 0 : (p.getNumber() * p.getSize() + 1);
+        int end   = start == 0 ? 0 : (start + p.getNumberOfElements() - 1);
+        model.addAttribute("rangeStart", start);
+        model.addAttribute("rangeEnd", end);
+
+        return "orders/list";
+    }
+
 }
