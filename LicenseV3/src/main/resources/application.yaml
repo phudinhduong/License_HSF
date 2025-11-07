@@ -1,6 +1,6 @@
 spring:
   datasource:
-    url: jdbc:sqlserver://localhost:1433;databaseName=assignment_hsf;encrypt=true;trustServerCertificate=true
+    url: jdbc:sqlserver://localhost:1433;databaseName=license;encrypt=true;trustServerCertificate=true
     username: sa
     password: sa
     driver-class-name: com.microsoft.sqlserver.jdbc.SQLServerDriver
@@ -64,13 +64,13 @@ app:
 #
 #
 #    hsf302.he187383.phudd.license: DEBUG
-#logging:
-#  level:
-#    org.springframework.web: INFO
-#    org.hibernate.SQL: DEBUG
-#    org.hibernate.orm.jdbc.bind: TRACE
-#    org.springframework.security: INFO
-#    com.zaxxer.hikari: INFO
+logging:
+  level:
+    org.springframework.web: INFO
+    org.hibernate.SQL: DEBUG
+    org.hibernate.orm.jdbc.bind: TRACE
+    org.springframework.security: INFO
+    com.zaxxer.hikari: INFO
 
 vnpay:
   tmnCode: "XDCKXC4A"
